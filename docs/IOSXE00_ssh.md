@@ -9,15 +9,23 @@ and verify their configuration.
 
 - How to connect to IOS-XE devices using Solar-PuTTY
 - How to verify device information with basic `show` commands
-- What minimal configuration is required for Network as Code/RESTCONF
+- What minimal configuration is required for Network as Code/NETCONF
   automation
 
-## RESTCONF and NETCONF
+## This lab uses NETCONF
 
-IOSXE-as-Code can use either RESTCONF or NETCONF to communicate with network
-devices. This version of the lab guide focuses on RESTCONF - see the
-[Cheat Sheet](CheatSheet.md) for the shared device credentials used
-throughout this section.
+Network as Code for IOS XE uses **NETCONF over SSH (TCP 830)** to push
+configuration to the devices. See the [Cheat Sheet](CheatSheet.md) for the
+shared device credentials used throughout this section.
+
+!!! info "Why NETCONF?"
+    NETCONF is transactional. Terraform writes to the device's *candidate*
+    datastore, the device validates it, and a `commit` then swaps it into
+    the *running* configuration all at once. If anything fails, the proposed
+    change is discarded and the running configuration is untouched. RESTCONF
+    has no equivalent: it writes straight to running, one HTTP call per
+    resource, so a failure part-way through can leave a device partly
+    configured. See the [Glossary](Glossary.md) for datastore terms.
 
 ## Open Solar-PuTTY
 
@@ -108,22 +116,25 @@ Once you've reviewed `show version`/`show run` on `Core`, do the same on
 Look for these specific configuration lines in the `show run` output:
 
 ```text
-username nac_admin privilege 15 secret cisco
+username nac_admin privilege 15 secret 9 $9$s7xNTwqH30ICfk$kC0JF...
 ...
-ip http secure-server
-...
-restconf
+netconf-yang
+netconf-yang feature candidate-datastore
 ```
 
 What these commands do:
 
-- **`ip http secure-server`** - enables the HTTPS server on the switch,
-  required for RESTCONF API access.
-- **`restconf`** - enables the RESTCONF API, which Terraform uses to
-  configure the device.
-- **`username nac_admin privilege 15 secret cisco`** - creates the
-  administrative user Terraform uses for authentication (shown encrypted in
-  `show run` for security).
+- **`netconf-yang`** - enables the NETCONF-over-SSH server on TCP/830. This
+  is the channel Terraform uses to push YANG-modelled configuration.
+- **`netconf-yang feature candidate-datastore`** - enables the candidate
+  datastore. `ios-xe/main.tf` sets `device_transaction = true`, and the
+  [data model](https://netascode.cisco.com/docs/data_models/iosxe/entity/device/)
+  lists the candidate datastore as a prerequisite for it. Already enabled
+  on the lab devices.
+- **`username nac_admin privilege 15 ...`** - creates the administrative
+  user Terraform uses for authentication. The password is stored hashed, so
+  `show run` shows `secret 9 $9$...` rather than the plaintext you'd type
+  when configuring it.
 
 !!! tip "Dedicated automation user"
     It's good practice to have a dedicated administrative user configured
@@ -132,36 +143,64 @@ What these commands do:
     Network as Code framework, this user needs to be configured on every
     device Terraform will manage.
 
-## Enabling RESTCONF Manually
+## Enabling NETCONF Manually
 
 !!! note
-    You don't need to do this now - it's already configured on all lab
-    devices. This is for reference if you ever enable RESTCONF on a new
-    device.
+    You don't need to do this now - the base NETCONF configuration is already
+    in place on all lab devices. This is for reference if you ever enable
+    NETCONF on a new device.
 
 ```text
-config t
-ip http secure-server
-restconf
+configure terminal
 username nac_admin privilege 15 secret cisco
+netconf-yang
+netconf-yang feature candidate-datastore
 end
 write memory
 ```
 
-Very recently, NETCONF support has also been added to the
-[`ciscodevnet/iosxe` Terraform provider](https://registry.terraform.io/providers/CiscoDevNet/iosxe/latest)
-as the default protocol. Future versions of this lab may include NETCONF
-examples as well.
+`netconf-yang feature candidate-datastore` turns on the candidate / commit /
+discard-changes flow that makes applies all-or-nothing. It is a
+[documented prerequisite](https://netascode.cisco.com/docs/data_models/iosxe/entity/device/)
+for the `device_transaction = true` setting in `ios-xe/main.tf`. Without it,
+the provider edits the running configuration directly, one resource at a
+time.
 
-!!! warning "RESTCONF takes a few minutes to come up"
-    If you try this on your own devices after the event, note that after
-    enabling RESTCONF, it takes a few minutes for the RESTCONF API to become
-    available. You can verify availability from a client machine with:
+!!! warning "NETCONF takes a minute to come up"
+    If you try this on your own devices after the event, allow about 60
+    seconds after enabling `netconf-yang` before pointing Terraform at the
+    device.
+
+    From the device itself, confirm the NETCONF process is up and the
+    candidate datastore is present:
+
+    ```text
+    show platform software yang-management process
+    show netconf-yang datastores
+    ```
+
+    `ncsshd` should be `Running`, and the datastore list should show both
+    entries:
+
+    ```text
+    Datastore Name             : running
+    Datastore Name             : candidate
+    ```
+
+    If `candidate` is missing, `device_transaction = true` has nothing to
+    commit into and the apply will fail.
+
+    From the jump host you can also open the NETCONF subsystem directly - a
+    successful connection prints the device's `<hello>` message:
 
     ```sh
-    curl -i -k -X "GET" "https://<IP_ADDRESS>/restconf/" -u <USERNAME>:<PASSWORD>
+    ssh -s -p 830 <USERNAME>@<IP_ADDRESS> netconf
     ```
+
+    Run that from the WSL/Ubuntu terminal, not from Solar-PuTTY: the `-s`
+    subsystem flag needs an OpenSSH client, which the PuTTY family doesn't
+    provide.
 
 ---
 
-**← Previous:** [Applying Part 1](Meraki06_applying.md) · **Next:** [Global config](IOSXE01_global.md)
+**← Previous:** [CI/CD pipeline](Meraki07_cicd.md) · **Next:** [Global config](IOSXE01_global.md)

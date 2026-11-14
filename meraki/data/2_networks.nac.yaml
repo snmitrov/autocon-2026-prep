@@ -87,6 +87,7 @@ meraki:
                     appliance_ip: 10.1.10.1
                     dhcp_handling: "Run a DHCP server"
                     mandatory_dhcp: false
+                    group_policy_name: Employees
                   - vlan_id: 20
                     name: "Voice"
                     subnet: 10.1.20.0/24

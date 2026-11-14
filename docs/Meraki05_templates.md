@@ -61,12 +61,12 @@ references it - the same reusability/consistency/maintainability trade-off
 you'll see again in IOS-XE Part 2, step 5.
 
 By the time this merge happens, the two files stop being separate concerns -
-`terraform apply` writes one fully-resolved result to
-`meraki_merged_configuration.nac.yaml`, the same merged-model file every
-earlier step's `nac-validate`/`nac-test` runs have been reading. Open it
-after this step and the four templates won't appear as their own section at
-all; their `appliance.firewall.*` content is already inlined under the
-branch network, indistinguishable from configuration you'd written directly.
+`nac`'s render step writes one fully-resolved result to `model.yaml`, the
+same rendered model every earlier step's `nac validate`/`nac test` runs
+have been reading. Open it after this step and the four templates won't
+appear as their own section at all; their `appliance.firewall.*` content is
+already inlined under the branch network, indistinguishable from
+configuration you'd written directly.
 
 !!! warning "The name must match exactly"
     A `name` that doesn't match is not an error - it's a silent miss. The

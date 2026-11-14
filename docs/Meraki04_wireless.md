@@ -2,7 +2,7 @@
 
 !!! tip "Move this step's file into place"
     Move `data-lab-task/4_wireless.nac.yaml` into `data/` before you run
-    `terraform plan`/`apply` for this step - that's what adds the AP device,
+    `nac plan`/`apply` for this step - that's what adds the AP device,
     RF profile, and SSIDs to the merged model.
 
 Adds the AP device per branch (claimed with tags/location only - deliberately
@@ -44,7 +44,7 @@ unavailability_schedules:
       end_day: Saturday
 ```
 
-`terraform plan` shows exactly one changed SSID attribute - apply it, confirm
+`nac plan` shows exactly one changed SSID attribute - apply it, confirm
 it in **Wireless > SSIDs > Guest > Scheduled availability** in the Dashboard,
 then revert.
 
@@ -59,7 +59,7 @@ the whole mechanism behind "move the file to make it count."
 
 ## A note on where Terraform keeps track of state
 
-When you run `terraform apply` locally, Terraform needs to remember what it
+When you run `nac apply` locally, Terraform needs to remember what it
 already created so the next `plan` can compare your YAML against reality
 instead of rediscovering everything from the Dashboard. That record is the
 **state file**. `meraki/main.tf` leaves its `backend "http" {}` block
@@ -112,7 +112,7 @@ Dashboard.
 
 !!! warning "Local state is a lab convenience, not a production pattern"
     A `terraform.tfstate` file on disk only stays trustworthy when exactly
-    one person runs `terraform apply` against a given config. In production
+    one person runs `nac apply` against a given config. In production
     you want state stored and locked somewhere shared, so a second
     engineer's apply can't race yours or silently overwrite your history.
     This repo's own `.gitlab-ci.yml` already shows that pattern: it points

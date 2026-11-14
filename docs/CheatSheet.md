@@ -69,7 +69,13 @@ status page, etc.).
 The `.env` variables above are for running Terraform **locally**. The GitLab
 pipeline (`.gitlab-ci.yml`) doesn't read `.env` - it needs its own copy of
 your pod-specific values, set as **GitLab CI/CD Variables** instead
-(Project → Settings → CI/CD → Variables → **Add variable**).
+(Project → Settings → CI/CD → Variables → **Add variable**):
+
+<figure markdown="span">
+  ![GitLab project Settings > CI/CD > Variables](assets/cicd-variable-1-annotated.png){ width="80%" }<figcaption>In
+  your GitLab project: **(1)** Settings → **(2)** CI/CD → **(3)** Variables,
+  then **Add variable**.</figcaption>
+</figure>
 
 When you add `MERAKI_API_KEY` (masked + protected), add the five variables
 listed alongside it below - one shared with your partner (`org_name`) and
@@ -85,6 +91,13 @@ committed to Git history):
 | `branch_mx_serial` | your pod's MX appliance serial |
 | `branch_ms_serial` | your pod's MS switch serial |
 | `branch_cw_serial` | your pod's CW access point serial |
+
+<figure markdown="span">
+  ![Add variable dialog, populated with an example key and value](assets/populate-variable.png){ width="50%" }<figcaption>The
+  **Add variable** dialog, with `MERAKI_API_KEY` as an example - set
+  **Visibility** to **Masked** and check **Protect variable** for this one,
+  since it's the one real secret.</figcaption>
+</figure>
 
 Everything else the pipeline needs (shared hub network name, example SNMP/
 RADIUS/local-status-page credentials, Terraform state backend settings) is

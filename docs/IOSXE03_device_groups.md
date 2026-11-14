@@ -51,7 +51,7 @@ dependency graph (not file order) decides real apply order.
 
 ## How this merges into each device
 
-When you run `terraform apply`, the module
+When you run `nac apply`, the module
 deep-merges every `data/*.nac.yaml` file - global, device groups, devices -
 into one resolved view per device, following the same global → device group
 → device precedence used throughout this lab. Three rules drive that merge:

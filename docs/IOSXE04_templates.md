@@ -42,7 +42,7 @@ iosxe:
         - access_switch_vlans
 ```
 
-After `terraform apply`, VLANs 10/20/99 land on **Access1 and Access2
+After `nac apply`, VLANs 10/20/99 land on **Access1 and Access2
 only** - not on `Border`/`Core`, which are never added to this template
 reference.
 
@@ -53,7 +53,7 @@ into every member at render time.
 
 ## Verifying it on the devices
 
-Once `terraform apply` has finished, connect to `Access1` or `Access2` with
+Once `nac apply` has finished, connect to `Access1` or `Access2` with
 Solar-PuTTY and run:
 
 ```text

@@ -154,17 +154,45 @@ uv tool install nac-cli
     The `nac` package on PyPI is a different, unrelated package - don't use
     `pip install nac` or `uvx nac`. Always install `nac-cli`.
 
+<figure markdown="span">
+  ![Successful nac-cli install, showing nac --help output](assets/nac-cli.png){ width="70%" }<figcaption>A
+  successful `nac-cli` install - `nac --help` lists the full command
+  set.</figcaption>
+</figure>
+
 Confirm it installed correctly:
 
 ```sh
 nac --help
 ```
 
-<figure markdown="span">
-  ![Successful nac-cli install, showing nac --help output](assets/nac-cli.png){ width="70%" }<figcaption>A
-  successful `nac-cli` install - `nac --help` lists the full command
-  set.</figcaption>
-</figure>
+```text
+ Usage: nac [OPTIONS] COMMAND [ARGS]...
+
+ An umbrella CLI wrapping terraform/tofu, nac-validate, and nac-test.
+
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
+│ --config             <path>                               Path to the nac.yaml config file.       │
+│                                                            [env var: NAC_CONFIG]                   │
+│                                                            [default: nac.yaml]                     │
+│ --verbosity  -v      <DEBUG|INFO|WARNING|ERROR|CRITICAL>  Verbosity level.                         │
+│                                                            [env var: NAC_VERBOSITY]                 │
+│                                                            [default: WARNING]                      │
+│ --no-color           <bool>                               Disable colored output (also honored     │
+│                                                            via the NO_COLOR env var).               │
+│ --version            <bool>                               Show the version and exit.               │
+│ --help               <bool>                               Show this message and exit.              │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────╮
+│ setup     Verify prerequisites and report resolved tool versions.                                 │
+│ init      Initialize the Terraform/OpenTofu working directory.                                    │
+│ validate  Render (if configured) then validate the resolved data paths.                           │
+│ plan      Produce a saved plan file, optionally with plan.txt/plan.json artifacts.                │
+│ apply     Apply a saved plan file if present, otherwise apply interactively.                       │
+│ test      Run nac-test against the configured data/templates/filters/output.                     │
+│ destroy   Destroy the managed infrastructure (interactive unless --auto-approve).                  │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
 
 You'll use `nac init`, `nac validate`, `nac plan`, `nac apply`, and `nac
 test` throughout both tracks, instead of calling Terraform or the
@@ -243,19 +271,15 @@ network-as-code/
 └── ios-xe/               # Part 2 - IOS-XE track
     ├── main.tf
     ├── data/
-    ├── data-lab-task/
-    ├── rules/
-    └── tests/
+    └── data-lab-task/
 ```
 
-The two tracks no longer mirror each other exactly. Both still have a
-`main.tf` that drives the NaC module, a `data/` folder that the module
-reads, and a `data-lab-task/` folder containing files you progressively move
-into `data/` as the lab advances. `ios-xe/` additionally carries a `rules/`
-folder for validation and a `tests/` folder for post-deployment checks -
-`meraki/` keeps just the three essentials above. You will work within a
-single track's folder at a time; commands such as `nac plan` must always be
-run from within `meraki/` or `ios-xe/`, never from the repository root.
+Both tracks share the same structure: a `main.tf` that drives the NaC
+module, a `data/` folder that the module reads, and a `data-lab-task/`
+folder containing files you progressively move into `data/` as the lab
+advances. You will work within a single track's folder at a time; commands
+such as `nac plan` must always be run from within `meraki/` or `ios-xe/`,
+never from the repository root.
 
 ### Terraform: the `main.tf` file
 
@@ -305,15 +329,11 @@ Understanding the configuration:
 cp .env.example .env
 ```
 
-Open `.env` and populate just these variables - everything else in the file
-already has a working default for the lab:
-
-| Variable | Where to get it |
-|---|---|
-| `MERAKI_API_KEY` | [Step 2 - Generate Your Meraki API Key](Meraki00_login.md#step-2-generate-your-meraki-api-key) |
-| `org_name` | From your proctor |
-| `branch_name` | Your own choice - must be unique within your shared org (e.g. your initials or pod number) |
-| `branch_mx_serial` / `branch_ms_serial` / `branch_cw_serial` | From your proctor |
+Everything in the file already has a working default for the lab except a
+handful of pod-specific values - you'll fill those in once you have them:
+`MERAKI_API_KEY` after [generating it](Meraki00_login.md#step-2-generate-your-meraki-api-key),
+and `org_name`/`branch_name`/the device serials once you reach [Org and
+global settings](Meraki01_org_global.md#set-your-pods-values-in-env).
 
 !!! note "`.env` stays local - never committed"
     `.env` is gitignored - only the blank `.env.example` template is tracked

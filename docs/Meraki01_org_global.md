@@ -59,8 +59,15 @@ In the provided file, there are other settings, such as SNMP as well as some fir
 
 ## Set your pod's values in `.env`
 
-Edit the `.env` file you copied from `.env.example` earlier, and set
-`org_name` to the Org ID your proctor gave you (also visible in the Meraki
+Edit the `.env` file you copied from `.env.example` in [Environment
+Setup](Intro02_environment.md#copy-envexample-to-env), and set the API key
+you just generated:
+
+```sh
+export MERAKI_API_KEY=your_api_key_here
+```
+
+Then set `org_name` to the Org ID your proctor gave you (also visible in the Meraki
 Dashboard, as the `Org-[org_id]` pattern from Step 1):
 
 ```sh
@@ -98,7 +105,7 @@ demonstrates automating organization creation with just a few settings.
 
 ## Source `.env` and Initialize Terraform
 
-With all five variables set, source the file from the repo root so
+With all six variables set, source the file from the repo root so
 Terraform's process picks them up, then `cd` into `meraki/` and initialize
 the module - commands like `nac init`/`plan`/`apply` always run from
 `meraki/` or `ios-xe/`, never from the repository root:
@@ -162,14 +169,20 @@ of mistakes, both running before anything touches the Dashboard:
   auto-discovered the moment `nac init` has downloaded the module.
 - **Semantic (business-rule) validation** goes further: custom logic runs
   against the parsed configuration to enforce policies a schema can't
-  express on its own. The module ships one such rule too, auto-discovered
-  the same way. A file can pass every syntax check and still fail here.
+  express on its own. The module ships one such rule, as an example,
+  auto-discovered the same way. A file can pass every syntax check and
+  still fail here.
 
 ### Try it: a syntax failure
 
 `login_security.num_different_passwords` in this file is `3` (line 13). The
 module's schema declares that field as `int(min=1, max=10, required=False)`
-- anything from `1` to `10` is legal. From a terminal **in `meraki/`**, run
+- anything from `1` to `10` is legal. You can see this for yourself once
+`nac init` has downloaded the module: open
+`meraki/.terraform/modules/meraki/nac/schema.yaml` and search for
+`num_different_passwords` - that's the actual file `nac validate` reads
+against, not just this doc's description of it. From a terminal **in
+`meraki/`**, run
 `nac validate` against the file as-is first, to see a clean pass - it
 auto-discovers the module's schema (and rules) with no extra flags needed:
 
@@ -229,14 +242,26 @@ again.
 
 ### Semantic validation comes from the module too
 
-Besides the schema, the `meraki` module also ships a semantic rule
-(`nac/rules/302_group_policy_references.py`) that checks every
-`group_policy_name` reference - on an appliance VLAN, an identity PSK, or an
-SSID device-type policy - against the group policies actually defined on
-that network. The DEBUG output above already shows it running (`Verifying
-rule id 302`): it found nothing to flag, because this file doesn't define
-any networks, group policies, or references yet. You'll see it catch a real
-mistake once those exist, in [Networks](Meraki02_networks.md).
+Besides the schema, the `meraki` module also ships a semantic rule that
+checks every `group_policy_name` reference - on an appliance VLAN, an
+identity PSK, or an SSID device-type policy - against the group policies
+actually defined on that network. Once `nac init` has downloaded the
+module, you can read its actual source at
+`meraki/.terraform/modules/meraki/nac/rules/302_group_policy_references.py`.
+The DEBUG output above already shows it running (`Verifying rule id 302`):
+it found nothing to flag, because this file doesn't define any networks,
+group policies, or references yet. You'll see it catch a real mistake once
+those exist, in [Networks](Meraki02_networks.md).
+
+Rule `302` ships as a single example of what's possible, not the limit of
+it - it's just one policy the module's authors chose to demonstrate.
+Nothing stops you from writing your own rules for whatever your
+organization actually cares about (a naming convention, an approved VLAN
+range, a required tag), the same way this one is written - as a Python
+class dropped into a `rules/` directory that `nac validate` auto-discovers.
+If you'd rather not write them yourselves, Cisco Services can develop
+custom semantic rules (and schemas) for your organization's specific
+policies.
 
 ## Plan and Apply
 

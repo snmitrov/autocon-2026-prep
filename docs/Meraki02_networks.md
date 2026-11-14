@@ -10,8 +10,8 @@ cd meraki
 mv data-lab-task/2_networks.nac.yaml data/
 ```
 
-Only once it's in `data/` will `terraform plan` show the branch network and
-MX appliance being created.
+Only once it's in `data/` will `nac plan` show the branch network and MX
+appliance being created.
 
 ## Open and review the file
 
@@ -66,7 +66,9 @@ directly as YAML:
 
 - `vlans`: six VLANs - Data (10), Voice (20), Iot (30), PCI (40), Guest (50),
   and Infra (999) - each with its own `/24` subnet, appliance IP, and DHCP
-  server settings.
+  server settings. VLAN 10 also sets `group_policy_name: Employees`,
+  assigning that group policy to clients on it by default - more on this
+  below.
 - `vpn_site_to_site_vpn`: this network as an Auto VPN **spoke**, pointed at
   `Datacenter` as its hub, with a per-subnet `use_vpn` flag - every subnet
   rides the VPN except Guest (50), which stays local.
@@ -93,7 +95,7 @@ data/2_networks.nac.yaml
     │   │   └── MX appliance (branch_mx_serial)
     │   │       └── uplinks_settings: WAN1 + WAN2 (DHCP)
     │   └── appliance
-    │       ├── vlans: Data(10) · Voice(20) · Iot(30) · PCI(40) · Guest(50) · Infra(999)
+    │       ├── vlans: Data(10, → Employees) · Voice(20) · Iot(30) · PCI(40) · Guest(50) · Infra(999)
     │       ├── vpn_site_to_site_vpn: spoke → Datacenter
     │       ├── ports: trunk (5-6, 13-14) · disabled (7-12)
     │       └── traffic_shaping: bandwidth limits, performance classes, uplink selection
@@ -101,29 +103,108 @@ data/2_networks.nac.yaml
 ```
 
 
-## Testing it: run `nac-test` right after this step
+## Plan and Apply
 
-You don't have to wait until every step is deployed to check your work. Once
-the network exists, `tests/templates/config/networks_list.robot` already has
-something to verify: the network's `name`, `product_types`, `time_zone`, and
-`tags` against the live Dashboard. The `.robot` extension is a hint at the
-tooling underneath - `nac-test` runs test cases on **Robot Framework**,
-generated from **Jinja2** templates against your merged data model, which is
-why the test files live under `tests/templates` rather than being plain,
-static Robot files. Deploy this step, then run the tests - the same
-`terraform apply` also refreshes `meraki_merged_configuration.nac.yaml`
-on disk, which is the file `nac-test` reads:
+With the file reviewed, deploy it for real - both commands run from
+`meraki/`:
 
 ```sh
-cd meraki
-terraform apply -auto-approve
-nac-test -d ./meraki_merged_configuration.nac.yaml -t ./tests/templates -o ./tests/results
+nac plan
+nac apply
+```
+
+As in the previous step, `nac apply` applies the `plan.tfplan` saved by
+`nac plan` directly - there's no confirmation prompt, so double-check the
+plan output first.
+
+## Validating the deployed network
+
+### A clean pass
+
+VLAN 10's `group_policy_name: Employees` (line 90) matches a
+`group_policies` entry actually named `Employees` in this same network, so
+`nac validate` passes both layers - including the module's semantic rule,
+`302`, which checks exactly this kind of reference (see its source at
+`meraki/.terraform/modules/meraki/nac/rules/302_group_policy_references.py`,
+mentioned back in [Org and global
+settings](Meraki01_org_global.md#semantic-validation-comes-from-the-module-too)):
+
+```sh
+nac validate
+```
+
+```text
+INFO - Verifying rule id 302
+
+────────────────────────────────────────────────────────────────────────────────
+Validation Summary
+────────────────────────────────────────────────────────────────────────────────
+  ✓ Syntax validation: PASSED (1 files)
+  ✓ Semantic validation: PASSED
+────────────────────────────────────────────────────────────────────────────────
+```
+
+### Try it: a semantic failure
+
+Now introduce a real mistake: typo VLAN 10's `group_policy_name` from
+`Employees` to `Employeess`, then run the exact same command again:
+
+```sh
+nac validate
+```
+
+!!! failure "Semantic validation: FAILED"
+    ```text
+    [RULE 302] Verify group policy references point to defined group policies
+
+    ================================================================================
+    UNDEFINED GROUP POLICY
+    ================================================================================
+
+    Found 1 violation(s).
+
+    References to undefined group policies:
+      • group policy 'Employeess' is not defined in the network
+        Path: meraki.domains[name=US].organizations[name=...].networks[name=...].appliance.vlans[vlan_id=10].group_policy_name
+
+    ────────────────────────────────────────────────────────────────────────────────
+    Validation Summary
+    ────────────────────────────────────────────────────────────────────────────────
+      ✓ Syntax validation: PASSED (1 files)
+      ✗ Semantic validation: FAILED (1 violation)
+
+        • 1 HIGH severity violation (rules: 302)
+    ────────────────────────────────────────────────────────────────────────────────
+    ```
+
+Unlike the previous step's syntax failure, this is perfectly legal YAML and
+a perfectly legal string - `nac validate` only catches it because rule
+`302` cross-checks the reference against the network's own
+`group_policies`. A typo like this would otherwise deploy successfully and
+silently do nothing: the VLAN would come up fine, just without the group
+policy applied. Set `group_policy_name` back to `Employees` when you're
+done, and re-run the command to confirm it passes again.
+
+## Testing it: run `nac test`
+
+You already deployed this step above - now verify it actually landed on the
+Dashboard. The module's own test templates
+(`nac/tests/templates/config/networks_list.robot`, bundled with the
+`meraki` module and auto-discovered the same way the schema and rules are)
+already have something to check: the network's `name`, `product_types`,
+`time_zone`, and `tags`. The `.robot` extension is a hint at the tooling
+underneath - `nac test` runs test cases on **Robot Framework**, generated
+from **Jinja2** templates against your merged data model, which is why
+these are templates rather than plain, static Robot files:
+
+```sh
+nac test
 ```
 
 Open `tests/results/report.html` to see the pass/fail result. Running this
-now, rather than waiting for the full deployment, is a useful habit: the
-sooner post-deploy drift or a misconfiguration is caught, the cheaper it is
-to fix.
+right after deploying, rather than waiting for the full lab, is a useful
+habit: the sooner post-deploy drift or a misconfiguration is caught, the
+cheaper it is to fix.
 
 ---
 

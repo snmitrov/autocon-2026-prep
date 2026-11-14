@@ -16,6 +16,5 @@ provider "meraki" {
 module "meraki" {
   source           = "github.com/netascode/terraform-meraki-nac-meraki?ref=v0.13.0-beta.1"
   yaml_directories = ["data"]
-  write_model_file = "meraki_merged_configuration.nac.yaml"
 }
 

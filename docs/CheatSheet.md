@@ -26,24 +26,26 @@ All 4 devices share one set of NETCONF/SSH credentials.
 - Username: `nac_admin`
 - Password: `cisco`
 
-## Terraform / CLI commands
+## nac CLI commands
 
 Run from `meraki/` or `ios-xe/` after sourcing your `.env`:
 
 ```sh
 source .env
-terraform init
-terraform plan
-terraform apply
+nac init
+nac plan
+nac apply
 ```
 
 Other useful commands:
 
 ```sh
-terraform validate        # check syntax/config without touching devices
-terraform fmt -recursive  # format .tf files
-terraform state list      # list resources Terraform currently manages
-terraform output          # show output values after apply
+nac validate                # schema + semantic validation of the data model
+nac test                    # post-deployment tests against the live devices
+terraform validate          # check .tf syntax/config without touching devices
+terraform fmt -recursive    # format .tf files
+terraform state list        # list resources Terraform currently manages
+terraform output            # show output values after apply
 ```
 
 ## Environment variables

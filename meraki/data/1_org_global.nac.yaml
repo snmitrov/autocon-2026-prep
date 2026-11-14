@@ -10,7 +10,7 @@ meraki:
             enforce_password_expiration: false
             password_expiration_days: 40
             enforce_different_passwords: true
-            num_different_passwords: 5
+            num_different_passwords: 3
             enforce_strong_passwords: true
             enforce_account_lockout: true
             account_lockout_attempts: 5

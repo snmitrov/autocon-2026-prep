@@ -27,3 +27,5 @@ meraki/cache.json.lock
 meraki/meraki_api_throttle.lock
 meraki/test_output.txt
 meraki/tests/results/
+meraki/model.yaml
+plan.tfplan

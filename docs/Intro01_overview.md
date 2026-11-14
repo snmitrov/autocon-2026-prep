@@ -132,8 +132,8 @@ By completing this lab, you will gain hands-on experience with:
 - Understanding the Network as Code configuration hierarchy (org/network and
   global -> group -> device, depending on platform)
 - Using variables and templates for reusable, scalable configurations
-- Pre-deployment validation with `nac-validate` (schema and semantic checks)
-- Post-deployment validation with `nac-test` (automated Robot Framework
+- Pre-deployment validation with `nac validate` (schema and semantic checks)
+- Post-deployment validation with `nac test` (automated Robot Framework
   tests)
 - Automating the full Infrastructure-as-Code lifecycle with CI/CD
   pipelines

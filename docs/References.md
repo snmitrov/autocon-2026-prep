@@ -15,8 +15,7 @@ community channels.
 
 | Tool | Link |
 |---|---|
-| NAC Validate | [github.com/netascode/nac-validate](https://github.com/netascode/nac-validate) |
-| NAC Test | [github.com/netascode/nac-test](https://github.com/netascode/nac-test) |
+| NAC CLI (`nac`) | [github.com/netascode/nac](https://github.com/netascode/nac) |
 
 ## Editor & environment tooling
 

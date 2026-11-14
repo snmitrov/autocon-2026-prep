@@ -30,8 +30,8 @@ and Solar-PuTTY already installed - connect to it through WebRDP.
     comfortable with. Just make sure you have, before the lab starts:
 
     - **Terraform** installed
-    - **[uv](https://docs.astral.sh/uv/)** installed - this lab's Python
-      tooling (`nac-validate`, `nac-test`) is installed and run through it
+    - **[uv](https://docs.astral.sh/uv/)** installed - the `nac` CLI is
+      installed and run through it
     - An active connection to the **lab VPN** - the GitLab instance and the
       virtualized IOS-XE devices (CML) only live inside the lab network, not
       on the public internet. On VPN, you'll reach GitLab directly (see
@@ -140,6 +140,36 @@ directly from PowerShell.
     3. Open a terminal in your project folder and run `wsl` as above to
        drop into it.
 
+### Install the `nac` CLI
+
+This lab drives Terraform/OpenTofu, data validation, and post-deployment
+testing through a single command line tool: `nac`. It's published on PyPI
+as `nac-cli` and installed with `uv` - run this from your WSL shell:
+
+```sh
+uv tool install nac-cli
+```
+
+!!! warning "Install `nac-cli`, not `nac`"
+    The `nac` package on PyPI is a different, unrelated package - don't use
+    `pip install nac` or `uvx nac`. Always install `nac-cli`.
+
+Confirm it installed correctly:
+
+```sh
+nac --help
+```
+
+<figure markdown="span">
+  ![Successful nac-cli install, showing nac --help output](assets/nac-cli.png){ width="70%" }<figcaption>A
+  successful `nac-cli` install - `nac --help` lists the full command
+  set.</figcaption>
+</figure>
+
+You'll use `nac init`, `nac validate`, `nac plan`, `nac apply`, and `nac
+test` throughout both tracks, instead of calling Terraform or the
+validation/testing tools directly.
+
 ## 2. CI/CD
 
 - **Your GitLab project** - the lab's own GitLab instance, where your CI/CD
@@ -209,9 +239,7 @@ network-as-code/
 ├── meraki/               # Part 1 - Meraki track
 │   ├── main.tf           # the Terraform module block for this track
 │   ├── data/             # what Terraform actually reads - starts nearly empty
-│   ├── data-lab-task/    # staged files you move into data/ one step at a time
-│   ├── rules/            # nac-validate semantic rules
-│   └── tests/            # nac-test Robot Framework suite
+│   └── data-lab-task/    # staged files you move into data/ one step at a time
 └── ios-xe/               # Part 2 - IOS-XE track
     ├── main.tf
     ├── data/
@@ -220,25 +248,25 @@ network-as-code/
     └── tests/
 ```
 
-Both tracks share the same structure: a `main.tf` that drives the NaC module,
-a `data/` folder that the module reads, a `data-lab-task/` folder containing
-files you progressively move into `data/` as the lab advances, a `rules/`
-folder for validation, and a `tests/` folder for post-deployment checks. You
-will work within a single track's folder at a time; commands such as
-`terraform plan` must always be run from within `meraki/` or `ios-xe/`,
-never from the repository root.
+The two tracks no longer mirror each other exactly. Both still have a
+`main.tf` that drives the NaC module, a `data/` folder that the module
+reads, and a `data-lab-task/` folder containing files you progressively move
+into `data/` as the lab advances. `ios-xe/` additionally carries a `rules/`
+folder for validation and a `tests/` folder for post-deployment checks -
+`meraki/` keeps just the three essentials above. You will work within a
+single track's folder at a time; commands such as `nac plan` must always be
+run from within `meraki/` or `ios-xe/`, never from the repository root.
 
 ### Terraform: the `main.tf` file
 
 Each track's folder in the repo you just cloned already has its own
 `main.tf` - you won't write one from scratch. It's worth understanding what's
-in it before you start running Terraform against it. Here's `meraki/main.tf`:
+in it before you start running `nac` against it. Here's `meraki/main.tf`:
 
 ```hcl title="meraki/main.tf"
 module "meraki" {
   source           = "github.com/netascode/terraform-meraki-nac-meraki?ref=v0.13.0-beta.1"
   yaml_directories = ["data"]
-  write_model_file = "meraki_merged_configuration.nac.yaml"
 }
 ```
 
@@ -270,10 +298,6 @@ Understanding the configuration:
   processes every YAML file within the `data/` folder - more flexible than
   listing individual files, since you can add multiple YAML files to
   `data/` and they'll all be processed automatically.
-- **`write_model_file = "meraki_merged_configuration.nac.yaml"`** - outputs
-  the merged YAML data model to a file. Useful for debugging and for running
-  Robot Framework tests against the combined configuration - you'll
-  generate and examine this file later in the lab.
 
 ### Copy `.env.example` to `.env`
 

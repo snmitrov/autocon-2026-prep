@@ -18,7 +18,7 @@ The guide walks through both halves of the lab, in order:
   (one per shared pod, appliance/switch/wireless) directly in YAML, ending
   on a templating/indirection capstone.
 - **Part 2 - IOS-XE**, a small four-device lab (`Border`, `Core`, `Access1`,
-  `Access2`) where you will push some basic configuration to IOS-XE devices directelly. 
+  `Access2`) where you will push some basic configuration to IOS-XE devices directly. 
 
 Meraki is a controller-managed
 platform (you configure a cloud Dashboard, which then pushes to devices),

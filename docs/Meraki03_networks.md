@@ -111,9 +111,7 @@ Before deploying anything, validate the file as it is. VLAN 10's
 actually named `Employees` in this same network, so `nac validate` passes
 both layers - including the module's semantic rule, `302`, which checks
 exactly this kind of reference (see its source at
-`meraki/.terraform/modules/meraki/nac/rules/302_group_policy_references.py`,
-mentioned back in [Org and global
-settings](Meraki02_org_global.md#semantic-validation-comes-from-the-module-too)):
+`meraki/.terraform/modules/meraki/nac/rules/302_group_policy_references.py`):
 
 ```sh
 nac validate
@@ -195,6 +193,15 @@ a perfectly legal string - `nac validate` only catches it because rule
 silently do nothing: the VLAN would come up fine, just without the group
 policy applied. Set `group_policy_name` back to `Employees`, and re-run
 `nac validate` to confirm it passes again before you deploy.
+
+Rule `302` ships as a single example of what's possible, not the limit of
+it. You can write your own rules for whatever your organization cares
+about (a naming convention, an approved VLAN range, a required tag), as
+Python classes like this one. You don't add them to the module, though:
+you put them in a `.rules/` directory in your own project (here
+`meraki/.rules/`), and `nac validate` runs them alongside the module's
+rules. If you'd rather not write them yourselves, Cisco Services can
+develop custom semantic rules for your organization's specific policies.
 
 ## Plan and Apply
 

@@ -125,15 +125,6 @@ filtering, intrusion prevention, and malware protection to it.
     Nothing in the Dashboard says these came from a template - which is
     exactly the point.
 
-## Testing it: run `nac test`
-
-```sh
-nac test
-```
-
-As in the previous steps, the bundled tests cover the network itself - a
-quick check that the templates didn't break anything already deployed.
-
 ## Try it: see the merged model
 
 `nac validate`, `nac plan`, and `nac test` all work from the same rendered

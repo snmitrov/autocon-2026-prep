@@ -12,12 +12,25 @@ mv data-lab-task/4_switching.nac.yaml data/
 
 ## Open and review the file
 
-Open `data/4_switching.nac.yaml` in VS Code. It adds the switch device per
-branch with per-port-range overrides: an uplink trunk port, infra ports
-disabled by default, an AP trunk port, and end-user access ports carrying
-VLAN 10 data with VLAN 20 as the voice VLAN. Also sets switch-wide settings
-(management VLAN 999, MTU, QoS trust rules per VLAN, storm control) and the
-wired 802.1X access policy.
+Open `data/4_switching.nac.yaml` in VS Code. It adds:
+
+- the switch for your branch, claimed by `branch_ms_serial`
+- its ports, configured per port range:
+    - 1-2 - uplink trunk, carrying all the branch VLANs
+    - 3-8 - reserved for infrastructure, disabled until needed
+    - 9-12 - trunks for the access points, native VLAN 999
+    - 13-24 - access ports for end users, data on VLAN 10 and voice on
+      VLAN 20, with BPDU guard
+- switch-wide settings:
+    - management VLAN 999 and jumbo frames (MTU 9176)
+    - IGMP snooping for multicast
+    - QoS: a DSCP-to-CoS mapping, plus rules that trust the DSCP markings on
+      the Data, Voice, IoT, and PCI VLANs and remark Guest traffic to
+      best effort
+    - storm control limits for broadcast, multicast, and unknown unicast
+      traffic
+- `Wired Access Policy` - 802.1X against two RADIUS servers, with RADIUS
+  accounting and change of authorization (CoA)
 
 **Key idea:** this step depends conceptually on step 3's VLANs (it references
 VLAN IDs 10/20/30/40/50/999 defined there), but there is no explicit
@@ -66,16 +79,6 @@ network, next to the MX from step 3.
       QoS rules, MTU 9176, and storm control.
     - **Switching > Configure > Access Policies**: `Wired Access Policy`.
 
-## Testing it: run `nac test`
-
-```sh
-nac test
-```
-
-The module's bundled tests currently cover the network itself, so you'll
-see the same passing tests as in step 3 - a quick check that adding the
-switch didn't break anything already deployed.
-
 ## Reading a `nac plan`
 
 Every `nac plan` line starts with a symbol that tells you what kind of
@@ -88,17 +91,15 @@ change you're looking at:
 - `-/+` destroy and re-create - the attribute can't be changed in place, so
   Terraform deletes the resource and creates a new one to apply it.
 
-The MTU change below is a textbook `~`: `default_mtu_size` can be updated on
-the live switch without touching anything else about it. That's exactly
-what makes it a safe field to practice on - contrast that with a `-/+`
-change, which would mean real downtime for whatever gets replaced.
+The MTU change below is a textbook `~`: `default_mtu_size` is updated on
+the live switch without replacing anything else about it - unlike a `-/+`
+change, which deletes the resource and creates it again.
 
-## Try it: change a non-impacting setting
+## Try it: change a setting
 
-`switch.mtu.default_mtu_size` is currently `9176` (jumbo frames). It's a good
-field to practice with - changing it doesn't break reachability to the
-switch or any other device, so `nac plan` shows exactly one changed
-attribute, an easy, low-risk way to see the plan/apply loop end to end:
+`switch.mtu.default_mtu_size` is currently `9176` (jumbo frames). Change it
+to `1500` and walk it through the plan/apply loop - `nac plan` should show
+exactly one changed attribute:
 
 ```yaml
 switch:

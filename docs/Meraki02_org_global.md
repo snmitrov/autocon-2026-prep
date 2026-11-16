@@ -95,9 +95,11 @@ export branch_ms_serial=XXX-XXX-XXX
 export branch_cw_serial=XXX-XXX-XXX
 ```
 
-`branch_name` can be anything unique to you - for example `"Shawn's
-Network"` - just pick something specific to you (like your own name), since
-two branch networks share this organization.
+`branch_name` can be anything unique to you - for example `"Shawn Branch"` -
+just pick something specific to you (like your own name), since two branch
+networks share this organization. Stick to letters, numbers, spaces,
+hyphens, and underscores: the Dashboard rejects network names with
+characters like an apostrophe (`'`).
 
 !!! note "`!env` vs `${...}` - two different variable mechanisms"
     `!env VAR` (used throughout this file) pulls a value from your shell
@@ -256,8 +258,9 @@ Validation Summary
 
 `nac validate` first renders the merged model of everything in `data/` to
 `model.yaml` (the same render step `nac plan`/`nac apply` use), then
-validates that model against the module's schema and rules. The semantic
-check runs the module's packaged rule - more on it below.
+validates that model against the module's schema and rules. The module's
+semantic rule has nothing to check in this file yet - you'll see it catch a
+real mistake in [step 3](Meraki03_networks.md#semantic-validation).
 
 Now temporarily lower `num_different_passwords` to `0` (line 13), below the
 schema's minimum, and run the exact same command again:
@@ -281,30 +284,6 @@ A syntax-level violation, caught before anything else runs - semantic
 validation doesn't even get a chance to start. Set `num_different_passwords`
 back to `3` when you're done, and re-run the command to confirm it passes
 again.
-
-### Semantic validation comes from the module too
-
-Besides the schema, the `meraki` module also ships a semantic rule that
-checks every `group_policy_name` reference - on an appliance VLAN, an
-identity PSK, or an SSID device-type policy - against the group policies
-actually defined on that network. Once `nac init` has downloaded the
-module, you can read its actual source at
-`meraki/.terraform/modules/meraki/nac/rules/302_group_policy_references.py`.
-It already ran in the clean pass above - that's the `Semantic validation:
-PASSED` line - and found nothing to flag, because this file doesn't define
-any networks, group policies, or references yet. You'll see it catch a real mistake once
-those exist, in [Networks](Meraki03_networks.md).
-
-Rule `302` ships as a single example of what's possible, not the limit of
-it - it's just one policy the module's authors chose to demonstrate.
-Nothing stops you from writing your own rules for whatever your
-organization actually cares about (a naming convention, an approved VLAN
-range, a required tag), written the same way as this one - as a Python
-class. You don't add them to the module, though: you put them in a
-`.rules/` directory in your own project (here `meraki/.rules/`), and
-`nac validate` runs them alongside the module's rules.
-If you'd rather not write them yourselves, Cisco Services can develop
-custom semantic rules for your organization's specific policies.
 
 ## Plan and Apply
 

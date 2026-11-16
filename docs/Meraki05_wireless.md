@@ -65,15 +65,6 @@ and the two SSIDs.
       `Corp wireless rf profile`. It shows as applied to 0 access points -
       this lab defines the profile but doesn't assign it to the AP.
 
-## Testing it: run `nac test`
-
-```sh
-nac test
-```
-
-As in step 4, the bundled tests cover the network itself - a quick check
-that adding wireless didn't break anything already deployed.
-
 ## Try it: detect configuration drift
 
 So far every change started in the YAML. In real life, someone eventually
@@ -145,10 +136,10 @@ real values replaced):
       "provider": "provider[\"registry.terraform.io/ciscodevnet/meraki\"]",
       "instances": [
         {
-          "index_key": "US/Org-3665367146726167151/Shawn's Network",
+          "index_key": "US/Org-3665367146726167151/Shawn Branch",
           "attributes": {
             "id": "L_1234567890123",
-            "name": "Shawn's Network",
+            "name": "Shawn Branch",
             "product_types": ["appliance", "switch", "wireless"],
             "time_zone": "America/Los_Angeles"
           }

@@ -9,8 +9,8 @@ both parts of the workshop.
 |---|---|---|---|
 | Meraki Dashboard | [dashboard.meraki.com](https://dashboard.meraki.com) | *(provided separately)* | *(provided separately)* |
 | Starter Repo (public, clone from here) | `TODO-starter-repo-url` | - | - |
-| GitLab (your project, push here) | `TODO-gitlab-url` | dcloud | C1sco12345 |
-| Windows Jump Machine | `TODO-jump-host-url` | - | C1sco12345 |
+| GitLab (your project, push here) | [https://gitlab.198.18.133.103.nip.io/users/sign_in](https://gitlab.198.18.133.103.nip.io/users/sign_in) | dcloud | C1sco12345 |
+| Windows Jump Machine | *(provided via email)* | - | C1sco12345 |
 
 ### IOS-XE devices
 
@@ -36,17 +36,6 @@ nac setup   # first time only: check prerequisites
 nac init
 nac plan
 nac apply
-```
-
-Other useful commands:
-
-```sh
-nac validate                # schema + semantic validation of the data model
-nac test                    # post-deployment tests against the live devices
-terraform validate          # check .tf syntax/config without touching devices
-terraform fmt -recursive    # format .tf files
-terraform state list        # list resources Terraform currently manages
-terraform output            # show output values after apply
 ```
 
 ## Environment variables
@@ -77,32 +66,6 @@ your pod-specific values, set as **GitLab CI/CD Variables** instead
   your GitLab project: **(1)** Settings → **(2)** CI/CD → **(3)** Variables,
   then **Add variable**.</figcaption>
 </figure>
-
-When you add `MERAKI_API_KEY` (masked + protected), add the five variables
-listed alongside it below - one shared with your partner (`org_name`) and
-four specific to your pod. They are kept out of `.gitlab-ci.yml` so nobody
-has to edit the pipeline file (and so pod hardware serials don't end up
-committed to Git history):
-
-| Variable | Value |
-|---|---|
-| `MERAKI_API_KEY` | your personal Meraki Dashboard API key |
-| `org_name` | your workshop's Meraki organization name |
-| `branch_name` | your pod's unique network name |
-| `branch_mx_serial` | your pod's MX appliance serial |
-| `branch_ms_serial` | your pod's MS switch serial |
-| `branch_cw_serial` | your pod's CW access point serial |
-
-<figure markdown="span">
-  ![Add variable dialog, populated with an example key and value](assets/populate-variable.png){ width="50%" }<figcaption>The
-  **Add variable** dialog, with `MERAKI_API_KEY` as an example - set
-  **Visibility** to **Masked** and check **Protect variable** for this one,
-  since it's the one real secret.</figcaption>
-</figure>
-
-Everything else the pipeline needs (shared hub network name, example SNMP/
-RADIUS/local-status-page credentials, Terraform state backend settings) is
-already defined inline in `.gitlab-ci.yml` and needs no changes.
 
 ## YAML syntax quick reference
 

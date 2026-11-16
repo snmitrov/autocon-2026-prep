@@ -22,7 +22,7 @@ and Solar-PuTTY already installed - connect to it through WebRDP.
 
 !!! note "WebRDP connection steps coming soon"
     Instructions for connecting to your jump machine over WebRDP will be
-    added here shortly.
+    added here shortly.  You can pull up the lab guide in a web browser on the WebRDP session.  (Remember when using copy and paste from a Mac, use the **control** key)
 
 !!! tip "Working from your own computer instead"
     If you'd rather use your own laptop instead of RDP-ing into the jump

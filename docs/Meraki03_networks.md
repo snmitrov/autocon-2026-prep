@@ -257,6 +257,14 @@ nac test
 ```
 
 ```text
+$ /usr/local/bin/terraform apply -target=module.meraki.local_sensitive_file.model -auto-approve
+
+────────────────────────────────────────────────────────────────────────────────
+Render Summary
+────────────────────────────────────────────────────────────────────────────────
+  ✓ Render: OK (module.meraki.local_sensitive_file.model -> model.yaml)
+────────────────────────────────────────────────────────────────────────────────
+
 $ /home/demouser/.local/bin/nac-test -d model.yaml -o tests/results
 
 

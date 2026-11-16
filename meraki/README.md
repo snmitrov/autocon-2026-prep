@@ -37,6 +37,8 @@ entries merge when the scalar attributes they share all have the same value
   - `MERAKI_API_KEY` — your Meraki Dashboard API key
   - `MERAKI_RETRY_ON_ERROR_CODES=404` — retries the temporary 404s the
     Dashboard API can return right after a device is claimed
+  - `MERAKI_RETRIES=5` — retries those calls up to 5 times instead of the
+    default 3
   - the `!env`-tagged values referenced across the YAML files:
     - `org_name`
     - `branch_name`

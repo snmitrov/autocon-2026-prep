@@ -323,7 +323,7 @@ with what you're about to create.
 Before we apply and push the changes, let's check Meraki Dashboard and see what the Login Security looks like.
 **Click Organization > Configure > Click Settings**
 
-<img width="785" height="449" alt="image" src="https://github.com/user-attachments/assets/47fa7ea8-b5e1-48e5-ba85-350f1d163c8d" />
+<img width="770" height="473" alt="image" src="https://github.com/user-attachments/assets/c1353ccd-f227-4f43-8014-f3b26686b367" />
 
 See the current settings:
 

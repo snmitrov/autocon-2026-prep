@@ -126,7 +126,7 @@ provider, transport, and target are platform-specific:
 | 1. Intent (what you write) | `*.nac.yaml` - declarative YAML, human-readable, under version control | Meraki data model (`meraki:` root) | IOS XE data model (`iosxe:` root) |
 | 2. NaC Terraform module | Merges every YAML in `data/`, resolves variables/templates, renders the data model | `netascode/terraform-meraki-nac-meraki` | `netascode/terraform-iosxe-nac-iosxe` |
 | 3. Terraform provider | Turns the merged model into resource-level API calls; knows how to diff and converge | `CiscoDevNet/meraki` | `CiscoDevNet/iosxe` |
-| 4. Transport | How the provider talks to the platform | HTTPS / REST to the Meraki Dashboard API | NETCONF over SSH (TCP 830), with a candidate datastore for transactional commits |
+| 4. Transport | How the provider talks to the platform | HTTPS / REST to the Meraki Dashboard API | NETCONF over SSH (TCP 830), staging changes in the candidate datastore before committing them |
 | 5. Target | Where configuration ends up | Meraki Dashboard-managed cloud configuration | Device's YANG-modeled running configuration |
 
 You are responsible for layer 1; Cisco builds and maintains layers 2 through

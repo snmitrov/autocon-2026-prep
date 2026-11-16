@@ -1,79 +1,128 @@
-# Step 5 - `data/4_templates.nac.yaml` + `data/4_templates_assignment.nac.yaml`: `model` templates
+# Step 4 - Configure Templates
 
-The capstone, mirroring Meraki's step 7. Templates answer *what
-configuration* to apply; device groups (step 4) answer *which devices*. Used
-together, you get "this exact VLAN set, on exactly these devices" without
-duplicating the VLAN definitions per device. Deliberately split into two
-files sharing the `4_` prefix - a template with nothing referencing it does
-nothing, so they're always read (and deployed) together, and deliberately
-*not* called `4_variables.nac.yaml` to avoid confusion with the unrelated
-`${VARIABLE}` substitution feature from steps 2-3.
+## Move this step's files into place
 
-`4_templates.nac.yaml` - the template library, `type: model` (pure YAML
-against the data model, schema-validated - as opposed to `file` or `cli`
-template types, not used in this lab):
+This step has two files, and they move into `data/` together - the template
+and the device groups that use it. From `ios-xe/`:
+
+```sh
+mv data-lab-task/4_templates.nac.yaml data/
+mv data-lab-task/4_vlan_groups.nac.yaml data/
+```
+
+## Open and review the files
+
+A device group alone already applies the same configuration to many
+devices - that's what step 3 did with the ACL. A template adds something a
+group can't: it's **defined once with variables, and rendered with
+different values** wherever it's used. This step uses one template to
+create two different VLANs, and decides per VLAN which devices get it.
+
+### The template
+
+`4_templates.nac.yaml` defines a single template, `vlan`. It's of
+`type: model`, so its content is regular data-model YAML. The VLAN ID and
+name are placeholders, not values:
 
 ```yaml
 ---
 iosxe:
   templates:
-    - name: access_switch_vlans
+    - name: vlan
       type: model
       configuration:
         vlan:
           vlans:
-            - id: 10
-              name: DATA
-            - id: 20
-              name: VOICE
-            - id: 99
-              name: MGMT
+            - id: ${VLAN_ID}
+              name: ${VLAN_NAME}
 ```
 
-`4_templates_assignment.nac.yaml` - the reference, merging into the
-`ACCESS_SWITCHES` group from step 4 by matching `name: ACCESS_SWITCHES`:
+### One device group per VLAN
+
+`4_vlan_groups.nac.yaml` creates one device group per VLAN. Each group
+lists the devices that get that VLAN, references the `vlan` template, and
+sets the template's variables:
 
 ```yaml
 ---
 iosxe:
   device_groups:
-    - name: ACCESS_SWITCHES
+    - name: VLAN_DATA
+      devices:
+        - Access1
+        - Access2
       templates:
-        - access_switch_vlans
+        - vlan
+      variables:
+        VLAN_ID: 10
+        VLAN_NAME: DATA
+    - name: VLAN_MGMT
+      devices:
+        - Border
+        - Core
+        - Access1
+        - Access2
+      templates:
+        - vlan
+      variables:
+        VLAN_ID: 99
+        VLAN_NAME: MGMT
 ```
 
-After `nac apply`, VLANs 10/20/99 land on **Access1 and Access2
-only** - not on `Border`/`Core`, which are never added to this template
-reference.
+The template is rendered once per group, with that group's variables. A
+device in several groups collects all of their VLANs: `Access1` and
+`Access2` get DATA and MGMT, while `Border` and `Core` get only
+MGMT. To roll out a new VLAN, you add one more group - the template stays
+untouched.
 
-**Key idea:** the same deep-merge-by-name mechanic as Meraki's templates
-step - NaC reads the template library, finds where it's referenced (here, a
-device group instead of a network), and merges the template's configuration
-into every member at render time.
+These groups have a different purpose than `ACCESS_SWITCHES` from step 3:
+that one groups devices by **role**, these decide **where a VLAN goes**.
+Both kinds of group can exist side by side, and a device can be a member
+of several.
 
-## Verifying it on the devices
+## Validate
 
-Once `nac apply` has finished, connect to `Access1` or `Access2` with
-Solar-PuTTY and run:
+```sh
+nac validate
+```
+
+Both syntax and semantic validation should pass. Open `model.yaml` to see
+the result: every device now has a `vlan` section with its VLANs, and the
+`${VLAN_ID}` and `${VLAN_NAME}` placeholders are replaced by each group's
+values.
+
+!!! tip "Variable values keep their type"
+    `VLAN_ID: 10` is a number, as the VLAN ID in the data model requires.
+    Write it as `VLAN_ID: "10"` and syntax validation fails with `'10' is
+    not a int` - the quotes make it a string.
+
+## Plan and Apply
+
+```sh
+nac plan
+nac apply
+```
+
+The plan adds the VLANs - two each on `Access1` and `Access2`, one each on
+`Border` and `Core`:
 
 ```text
-show access-lists | section AccessLayerACL
-show vlan brief
-show running-config | include ^hostname
+Plan: 6 to add, 0 to change, 0 to destroy.
 ```
 
-You should see:
+Each VLAN on each device is its own `iosxe_vlan` resource, for example
+`iosxe_vlan.vlan["Access1/10"]` and `iosxe_vlan.vlan["Border/99"]`.
 
-- `AccessLayerACL` with `10 permit 198.18.128.0, wildcard bits 0.0.63.255`,
-  from the device group in step 4.
-- VLANs 10 (`DATA`), 20 (`VOICE`) and 99 (`MGMT`), from the template above.
-- The hostname matching the device name, from the global `${HOSTNAME}`
-  variable. Log in again to see the new login banner as well.
+!!! tip "Verify on the devices"
+    Connect to `Access1` or `Access2` with Solar-PuTTY and run:
 
-Run the same commands on `Border` or `Core`: the hostname and banner are
-there, but `AccessLayerACL` is not, and `show vlan brief` lists only VLAN 1
-and the default 1002-1005 entries - none of VLANs 10, 20 or 99. That's the
-device group and template scoping working as intended.
+    ```text
+    show vlan brief
+    ```
+
+    You should see VLANs 10 (`DATA`) and 99 (`MGMT`). Run
+    the same command on `Border` or `Core`: there, only VLAN 99 (`MGMT`)
+    is added next to the defaults.
 
 ---
 

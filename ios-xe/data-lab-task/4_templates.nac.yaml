@@ -1,14 +1,10 @@
 ---
 iosxe:
   templates:
-    - name: access_switch_vlans
+    - name: vlan
       type: model
       configuration:
         vlan:
           vlans:
-            - id: 10
-              name: DATA
-            - id: 20
-              name: VOICE
-            - id: 99
-              name: MGMT
+            - id: ${VLAN_ID}
+              name: ${VLAN_NAME}

@@ -18,8 +18,6 @@ __pycache__/
 ios-xe/.pabotsuitenames
 ios-xe/.python-version
 ios-xe/tests/results/
-ios-xe/tests/.DS_Store
-ios-xe/tests/templates/.DS_Store
 
 meraki/.pabotsuitenames
 meraki/.python-version

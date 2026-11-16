@@ -1,7 +1,0 @@
----
-iosxe:
-  devices:
-    - name: Access1
-      host: 198.18.128.204
-      variables:
-        HOSTNAME: Access1

@@ -1,0 +1,20 @@
+---
+# Lab example only - not a complete routing policy.
+iosxe:
+  devices:
+    - name: Border
+      configuration:
+        prefix_lists:
+          - name: PL_LAB_MGMT
+            seqs:
+              - seq: 10
+                action: permit
+                prefix: 198.18.128.0/18
+        route_maps:
+          - name: RM_LAB_MGMT
+            entries:
+              - seq: 10
+                operation: permit
+                match:
+                  ipv4_address_prefix_lists:
+                    - PL_LAB_MGMT

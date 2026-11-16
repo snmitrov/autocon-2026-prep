@@ -89,7 +89,7 @@ Your proctor also provided you the serial numbers for your pod's devices - set
 those too, along with a name of your own choosing for your branch network:
 
 ```sh
-export branch_name=Your Own Branch Name
+export branch_name="Your Own Branch Name"
 export branch_mx_serial=XXX-XXX-XXX
 export branch_ms_serial=XXX-XXX-XXX
 export branch_cw_serial=XXX-XXX-XXX

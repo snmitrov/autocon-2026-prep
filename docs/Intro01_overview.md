@@ -1,8 +1,8 @@
-# AutoCon 6 - Network-as-Code Lab Guide
+# AutoCon 6 - Network as Code Lab Guide
 
 ## Learning objectives
 
-This step-by-step guide walks you through the AutoCon 6 Network-as-Code
+This step-by-step guide walks you through the AutoCon 6 Network as Code
 lab, covering **both** Meraki and IOS-XE. By the end, you will know how to
 deploy and manage Meraki and IOS-XE infrastructure with declarative
 Network-as-Code YAML and CI/CD pipelines.

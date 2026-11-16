@@ -10,7 +10,7 @@ both parts of the workshop.
 | Meraki Dashboard | [dashboard.meraki.com](https://dashboard.meraki.com) | *(provided separately)* | *(provided separately)* |
 | Starter Repo (public, clone from here) | `TODO-starter-repo-url` | - | - |
 | GitLab (your project, push here) | [gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop](https://gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop) | dcloud | C1sco12345 |
-| Windows Jump Machine | `TODO-jump-host-url` | - | C1sco12345 |
+| Windows Jump Machine | *(provided via email)* | - | C1sco12345 |
 
 ### IOS-XE devices
 
@@ -36,17 +36,6 @@ nac setup   # first time only: check prerequisites
 nac init
 nac plan
 nac apply
-```
-
-Other useful commands:
-
-```sh
-nac validate                # schema + semantic validation of the data model
-nac test                    # post-deployment tests against the live devices
-terraform validate          # check .tf syntax/config without touching devices
-terraform fmt -recursive    # format .tf files
-terraform state list        # list resources Terraform currently manages
-terraform output            # show output values after apply
 ```
 
 ## Environment variables

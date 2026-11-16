@@ -323,11 +323,18 @@ with what you're about to create.
 Before we apply and push the changes, let's check Meraki Dashboard and see what the Login Security looks like.
 **Click Organization > Configure > Click Settings**
 
-<img width="770" height="473" alt="image" src="https://github.com/user-attachments/assets/c1353ccd-f227-4f43-8014-f3b26686b367" />
+<figure markdown="span">
+  ![Meraki Dashboard Organization menu with Configure > Settings highlighted](assets/meraki-org-settings-menu.png){ width="60%" }<figcaption>The
+  Dashboard menu: **Organization > Configure > Settings**.</figcaption>
+</figure>
 
 See the current settings:
 
-<img width="800" height="338" alt="image" src="https://github.com/user-attachments/assets/3917a258-28f4-4abb-8d89-56604173960e" />
+<figure markdown="span">
+  ![Security section of the organization settings before the apply](assets/meraki-login-security-before.png){ width="80%" }<figcaption>The
+  **Security** section before `nac apply` - most login security options are
+  still off.</figcaption>
+</figure>
 
 ### `nac apply` Push the changes
 

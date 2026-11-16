@@ -218,7 +218,7 @@ jobs run: `deploy` applies the plan to your Meraki organization, and `test`
 checks the result. The `deploy` job log ends with:
 
 ```text
-Apply complete! Resources: N added, 0 changed, 0 destroyed.
+Apply complete! Resources: 69 added, 0 changed, 0 destroyed.
 ```
 
 The pipeline's **Tests** tab lists the test results. Your branch network is

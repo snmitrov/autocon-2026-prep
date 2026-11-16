@@ -36,6 +36,7 @@ nac validate
 ```
 
 Both syntax and semantic validation should pass.
+Before you plan and apply, notice that Meraki Dashboard does not currently have Wireless on the side menu.  It will appear after deployment.
 
 ## Plan and Apply
 

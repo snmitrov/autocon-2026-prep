@@ -124,15 +124,6 @@ Each VLAN on each device is its own `iosxe_vlan` resource, for example
     the same command on `Border` or `Core`: there, only VLAN 99 (`MGMT`)
     is added next to the defaults.
 
-## Testing it: run `nac test`
-
-```sh
-nac test
-```
-
-As in the previous steps, the bundled tests cover prefix lists - a quick
-check that the VLANs didn't break anything already deployed.
-
 ---
 
 **← Previous:** [Device groups](IOSXE03_device_groups.md) · **Next:** [Topologies](Topologies.md)

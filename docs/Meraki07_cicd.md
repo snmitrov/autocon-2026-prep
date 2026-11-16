@@ -87,9 +87,13 @@ access to the state.
 
 ## Open Your GitLab Project
 
-Open your GitLab project in the browser and log in - URL and login are in
-the [Cheat Sheet](CheatSheet.md). The menu on the left is where you'll find
-everything in this step:
+Open your GitLab project in the browser:
+
+- URL: [https://gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop](https://gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop)
+- Username: `dcloud`
+- Password: `C1sco12345`
+
+The menu on the left is where you'll find everything in this step:
 
 - **Settings > CI/CD** - the pipeline's variables
 - **Code > Merge requests** - your merge requests
@@ -165,8 +169,8 @@ a `main` to merge into:
 git push -o ci.skip -u origin main
 ```
 
-When asked, enter your GitLab login from the [Cheat Sheet](CheatSheet.md).
-`-o ci.skip` skips the pipeline for this push - there's nothing to deploy
+When asked, enter your GitLab login (username `dcloud`, password
+`C1sco12345`). `-o ci.skip` skips the pipeline for this push - there's nothing to deploy
 yet.
 
 !!! warning "Push `main` before any other branch"

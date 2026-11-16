@@ -203,6 +203,8 @@ you put them in a `.rules/` directory in your own project (here
 rules. If you'd rather not write them yourselves, Cisco Services can
 develop custom semantic rules for your organization's specific policies.
 
+Note that before Plan and Apply the "Datacenter" network is the only network available in Meraki Dashboard. 
+
 ## Plan and Apply
 
 With the file validated, deploy it for real - both commands run from
@@ -218,8 +220,8 @@ As in the previous step, `nac apply` applies the `plan.tfplan` saved by
 plan output first.
 
 !!! tip "Verify in the Dashboard"
-    Your branch network now exists. In the left-hand menu, pick it from the
-    **Network** selector (it's named after your `branch_name`), then look
+    Your branch network now exists. In the left-hand menu, click **Network Datacenter** then select your network
+    from the **Network** selector (it's named after your `branch_name`), then look
     at:
 
     - **The MX** - **Security & SD-WAN > Monitor > Appliance Status**: the

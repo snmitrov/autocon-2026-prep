@@ -5,7 +5,7 @@
 This step-by-step guide walks you through the AutoCon 6 Network as Code
 lab, covering **both** Meraki and IOS-XE. By the end, you will know how to
 deploy and manage Meraki and IOS-XE infrastructure with declarative
-Network-as-Code YAML and CI/CD pipelines.
+Network as Code YAML and CI/CD pipelines.
 
 !!! tip "New to these acronyms?"
     See the [Glossary](Glossary.md) in the top navigation. Keep it open in a

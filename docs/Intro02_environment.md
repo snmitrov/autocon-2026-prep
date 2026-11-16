@@ -229,7 +229,7 @@ that WSL terminal, clone the public starter repo directly into the current
 (empty) folder:
 
 ```sh
-git clone <starter-repo-url> .
+git clone https://github.com/netascode/autocon-6-workshop .
 ```
 
 !!! warning "Don't miss the trailing `.`"

@@ -8,7 +8,7 @@ both parts of the workshop.
 | System | Address | Username | Password |
 |---|---|---|---|
 | Meraki Dashboard | [dashboard.meraki.com](https://dashboard.meraki.com) | *(provided separately)* | *(provided separately)* |
-| Starter Repo (public, clone from here) | `TODO-starter-repo-url` | - | - |
+| Starter Repo (public, clone from here) | [github.com/netascode/autocon-6-workshop](https://github.com/netascode/autocon-6-workshop) | - | - |
 | GitLab (your project, push here) | [gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop](https://gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop) | dcloud | C1sco12345 |
 | Windows Jump Machine | *(provided via email)* | - | C1sco12345 |
 

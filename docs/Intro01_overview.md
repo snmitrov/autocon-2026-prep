@@ -15,8 +15,9 @@ The guide walks through both halves of the lab, in order:
 
 - **Part 1 - Meraki**, starting with logging into your lab Dashboard
   organization, then five steps authoring a single-branch Meraki network
-  (one per shared pod, appliance/switch/wireless) directly in YAML, ending
-  on a templating/indirection capstone.
+  (one per shared pod, appliance/switch/wireless) directly in YAML, building
+  a templating/indirection capstone, and finishing by running the same workflow
+  through a CI/CD pipeline.
 - **Part 2 - IOS-XE**, a small four-device lab (`Border`, `Core`, `Access1`,
   `Access2`) where you will push some basic configuration to IOS-XE devices directly. 
 

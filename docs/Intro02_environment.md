@@ -141,7 +141,7 @@ directly from PowerShell.
     3. Open a terminal in your project folder and run `wsl` as above to
        drop into it.
 
-### Install `nac-cli`
+### Install the nac CLI (`nac-cli`)
 
 This lab drives Terraform/OpenTofu, data validation, and post-deployment
 testing through a single command line tool: `nac`. It's published on PyPI

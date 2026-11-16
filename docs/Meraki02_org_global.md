@@ -373,7 +373,7 @@ Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
       is selected for you - the rules are organization-wide and look the
       same from every network.
 
-    Look, but don't change anything here: the YAML is the single source of
+    Look, but don't change anything on the dashboard: the YAML is the single source of
     truth, and a manual edit would be overwritten by the next `nac apply`.
 
 ---

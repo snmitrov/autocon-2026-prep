@@ -49,6 +49,8 @@ Both syntax and semantic validation should pass. This is what would catch
 an invalid port `type`, a VLAN ID out of range, or a malformed
 per-port-range override before `nac plan` ever runs.
 
+Before plan and apply, notice that in the Meraki Dashboard we do not have the Switching in the side menu.  It will appear after deployment.
+
 ## Plan and Apply
 
 ```sh

@@ -10,7 +10,7 @@ reach that step.
 | Step | What you configure | File |
 |---|---|---|
 | 1 - Access your Meraki organization (this page) | Log in to Dashboard, find your lab organization, create an API key | - |
-| 2 - [Organization global settings](Meraki02_org_global.md) | Admin, SNMPv3, login security, org-wide VPN firewall rules | `2_org_global.nac.yaml` |
+| 2 - [Organization global settings](Meraki02_org_global.md) | Login security, SNMPv3 | `2_org_global.nac.yaml` |
 | 3 - [Networks and appliance settings](Meraki03_networks.md) | Branch network, VLANs, site-to-site VPN, traffic shaping | `3_networks.nac.yaml` |
 | 4 - [Switching](Meraki04_switching.md) | MS switch ports, QoS, storm control, 802.1X access policy | `4_switching.nac.yaml` |
 | 5 - [Wireless](Meraki05_wireless.md) | CW access point, RF profile, Data and Guest SSIDs | `5_wireless.nac.yaml` |
@@ -71,7 +71,7 @@ We will be authenticating to Meraki using a personal API key tied to your dashbo
         A personal API key doesn't carry its own permissions - it acts with
         whatever role your account holds in the organization, the same way
         your dashboard login does. This lab's first steps configure
-        org-level settings (login security, SNMP, VPN firewall rules), so
+        org-level settings (login security, SNMP), so
         your lab account needs **full organization** admin access, not just
         network-level access, for Terraform to apply them - your lab
         account is already provisioned with full organization admin access

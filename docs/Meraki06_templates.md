@@ -153,12 +153,9 @@ steps 2-6 - the pipeline will rebuild all of it from the same YAML.
     - **Your MX, switch, and access point are removed from the network.**
       They stay in the organization's inventory, unassigned, until the
       pipeline claims them again.
-    - **The organization-wide site-to-site VPN firewall rules from step 2
-      are cleared.** Your partner shares this organization, so this affects
-      their pod too, until the next apply - theirs or your pipeline's - puts
-      the rules back.
     - **Login security and SNMP settings from step 2 stay as they are**:
-      Terraform only stops tracking them.
+      Terraform only stops tracking them. Your partner's pod in the same
+      organization isn't affected.
 
     There is no undo in the Dashboard. Your YAML still describes all of it,
     though, so nothing is lost: the pipeline in step 7 deploys it again.
@@ -170,12 +167,12 @@ nac destroy
 ```
 
 Terraform lists every resource it will destroy and ends with the summary
-`Plan: 0 to add, 0 to change, 70 to destroy.` - check that the only
+`Plan: 0 to add, 0 to change, 69 to destroy.` - check that the only
 network in the list is your own branch network, then type `yes` to
 confirm. It finishes with:
 
 ```text
-Destroy complete! Resources: 70 destroyed.
+Destroy complete! Resources: 69 destroyed.
 ```
 
 Your branch network no longer shows up in the Dashboard's network list.

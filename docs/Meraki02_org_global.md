@@ -66,7 +66,7 @@ Notice that the organization's `name` uses the `org_name` variable, resolved
 by the `!env` tag instead of being hardcoded. You'll set that value first in
 your local `.env` file, and later in the GitLab CI/CD variables. 
 
-In the provided file, there are other settings, such as SNMP as well as some firewall VPN rules. Examine the configuration. 
+Below it, the file also configures the organization's SNMP settings. Examine the configuration.
 
 ## Set your pod's values in `.env`
 
@@ -305,7 +305,7 @@ until you run `nac apply`. It ends with a summary line:
 ```text
     }
 
-Plan: 3 to add, 0 to change, 0 to destroy.
+Plan: 2 to add, 0 to change, 0 to destroy.
 
 ─────────────────────────────────────────────────────────────────────────────
 
@@ -315,8 +315,8 @@ To perform exactly these actions, run the following command to apply:
     terraform apply "plan.tfplan"
 ```
 
-`3 to add` is this file's three resources: the org's SNMP settings, its
-login security policy, and its VPN firewall rules.
+`2 to add` is this file's two resources: the org's SNMP settings and its
+login security policy.
 `0 to change, 0 to destroy` confirms nothing in your org already conflicts
 with what you're about to create.
 
@@ -345,12 +345,10 @@ nac apply
 ```text
 module.meraki.meraki_organization_snmp.organizations_snmp["US/Dev-SM"]: Creating...
 module.meraki.meraki_organization_login_security.organizations_login_security["US/Dev-SM"]: Creating...
-module.meraki.meraki_appliance_vpn_firewall_rules.organizations_appliance_vpn_firewall_rules["US/Dev-SM"]: Creating...
 module.meraki.meraki_organization_snmp.organizations_snmp["US/Dev-SM"]: Creation complete after 1s [id=709316941310853538]
 module.meraki.meraki_organization_login_security.organizations_login_security["US/Dev-SM"]: Creation complete after 1s [id=709316941310853538]
-module.meraki.meraki_appliance_vpn_firewall_rules.organizations_appliance_vpn_firewall_rules["US/Dev-SM"]: Creation complete after 2s [id=709316941310853538]
 
-Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 ```
 
 !!! tip "Verify in the Dashboard"
@@ -365,13 +363,6 @@ Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
       logged out after 90 minutes of inactivity.
     - **SNMP** - same page, section **SNMP**: **Version 3** shows *SNMP V3
       enabled*, while Version 2C stays disabled.
-    - **VPN firewall rules** - **Security & SD-WAN > Configure >
-      Site-to-site VPN**, section **Organization-wide settings**: the
-      **Site-to-site outbound firewall** table lists the seven rules
-      (Shared Services twice, then Data, IoT, Infra, Voice, and PCI
-      Access). This menu belongs to a network, so the `Datacenter` network
-      is selected for you - the rules are organization-wide and look the
-      same from every network.
 
     Look, but don't change anything on the dashboard: the YAML is the single source of
     truth, and a manual edit would be overwritten by the next `nac apply`.

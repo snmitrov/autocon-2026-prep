@@ -14,7 +14,8 @@ provider "meraki" {
 }
 
 module "meraki" {
-  source           = "github.com/netascode/terraform-meraki-nac-meraki?ref=v0.13.0-beta.1"
+  source           = "netascode/nac-meraki/meraki"
+  version          = "0.13.0-beta.1"
   yaml_directories = ["data"]
 }
 

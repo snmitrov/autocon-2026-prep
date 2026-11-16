@@ -60,7 +60,7 @@ into one resolved view per device, following the same global → device group
 |---|---|---|
 | Dicts deep-merge by key | Keys from both sides combine; shared keys merge recursively | The global `banner`/`system` block merging with this step's `access_lists` block into one `configuration:` dict per device |
 | Lists of scalars append | Strings/numbers/bools are concatenated, in order, duplicates kept | Not exercised in this lab (e.g. a shared `ntp_servers:` list would append this way) |
-| Lists of dicts merge by identity key | Entries sharing the same `name` deep-merge into one; otherwise both are kept | `device_groups`/`devices` entries matching on `name:` - mistype a `name` and you silently get two entries instead of one merged one |
+| Lists of dicts merge on matching attributes | Entries that share at least one scalar attribute, with every shared scalar attribute equal (in practice usually `name`), deep-merge into one; if any shared value differs, both are kept | `device_groups`/`devices` entries matching on `name:` - mistype a `name` and you silently get two entries instead of one merged one |
 
 For `Access1`, the fully resolved configuration ends up looking roughly like
 this - banner/hostname from [global config](IOSXE01_global.md), `access_lists`
@@ -75,9 +75,9 @@ iosxe:
         banner:
           login: |-
             #########################################
-            #   Welcome to the Autocon IOS XE Lab!  #
+            #   Welcome to the AutoCon IOS XE Lab!  #
             #########################################
-            Site:   Autocon 2026 IOS XE Lab
+            Site:   AutoCon 6 IOS XE Lab
             Device: Access1
         system:
           hostname: Access1

@@ -1,6 +1,6 @@
-# Autocon 2026 Prep
+# AutoCon 6 Prep
 
-This repo is used for the Autocon workshop **"From Network Change to Code: A Hands-on Network as Code Workshop"**, held on **17th of November at Autocon 6**.
+This repo is used for the AutoCon workshop **"From Network Change to Code: A Hands-on Network as Code Workshop"**, held on **17th of November at AutoCon 6**.
 
 ## Description
 

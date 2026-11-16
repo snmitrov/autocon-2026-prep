@@ -5,7 +5,7 @@ either track:
 
 1. **Windows Jump Machine** - the shared lab desktop with VS Code, WSL, and
    Terraform pre-installed, reachable over WebRDP without a VPN.
-2. **CI/CD** - after running through the steps manually, we will be pushing the configuration to the devices through CICD as well. As part of the lab enviroment we installed GitLab CI, but we will provide you also with eqivaalent Github actions you can run at your own repository.  GitLab project is reachable from the jump machine's
+2. **CI/CD** - after running through the steps manually, we will be pushing the configuration to the devices through CI/CD as well. As part of the lab environment we installed GitLab CI, but we will also provide equivalent GitHub Actions you can run in your own repository. The GitLab project is reachable from the jump machine's
    browser, or directly if you're on VPN to run the pipeline.
 3. **Meraki Dashboard** - the cloud controller for Part 1, accessed with
    your own account under a Bring Your Own Account (BYOA) model.
@@ -67,8 +67,8 @@ Key features that make VS Code ideal for Network as Code:
 
 1. Double-click the **Visual Studio Code** icon on the Windows desktop.
 2. Click **File → Open Folder**.
-3. In the address bar, type or paste: `/Desktop/network-as-code` - an empty
-   folder already created for you on the jump machine's desktop.
+3. Select **Desktop → network-as-code** - an empty folder already created
+   for you on the jump machine's desktop.
 4. Click **OK**.
 
 !!! note "Nothing to see yet"
@@ -172,26 +172,26 @@ nac --help
  An umbrella CLI wrapping terraform/tofu, nac-validate, and nac-test.
 
 ╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
-│ --config             <path>                               Path to the nac.yaml config file.       │
-│                                                            [env var: NAC_CONFIG]                   │
-│                                                            [default: nac.yaml]                     │
-│ --verbosity  -v      <DEBUG|INFO|WARNING|ERROR|CRITICAL>  Verbosity level.                         │
-│                                                            [env var: NAC_VERBOSITY]                 │
-│                                                            [default: WARNING]                      │
-│ --no-color           <bool>                               Disable colored output (also honored     │
-│                                                            via the NO_COLOR env var).               │
-│ --version            <bool>                               Show the version and exit.               │
-│ --help               <bool>                               Show this message and exit.              │
-╰─────────────────────────────────────────────────────────────────────────────────────────────────╯
+│ --config             <path>                               Path to the nac.yaml config file.      │
+│                                                           [env var: NAC_CONFIG]                  │
+│                                                           [default: nac.yaml]                    │
+│ --verbosity  -v      <DEBUG|INFO|WARNING|ERROR|CRITICAL>  Verbosity level.                       │
+│                                                           [env var: NAC_VERBOSITY]               │
+│                                                           [default: WARNING]                     │
+│ --no-color           <bool>                               Disable colored output (also honored   │
+│                                                           via the NO_COLOR env var).             │
+│ --version            <bool>                               Show the version and exit.             │
+│ --help               <bool>                               Show this message and exit.            │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
 ╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────╮
-│ setup     Verify prerequisites and report resolved tool versions.                                 │
-│ init      Initialize the Terraform/OpenTofu working directory.                                    │
-│ validate  Render (if configured) then validate the resolved data paths.                           │
-│ plan      Produce a saved plan file, optionally with plan.txt/plan.json artifacts.                │
-│ apply     Apply a saved plan file if present, otherwise apply interactively.                       │
+│ setup     Verify prerequisites and report resolved tool versions.                                │
+│ init      Initialize the Terraform/OpenTofu working directory.                                   │
+│ validate  Render (if configured) then validate the resolved data paths.                          │
+│ plan      Produce a saved plan file, optionally with plan.txt/plan.json artifacts.               │
+│ apply     Apply a saved plan file if present, otherwise apply interactively.                     │
 │ test      Run nac-test against the configured data/templates/filters/output.                     │
-│ destroy   Destroy the managed infrastructure (interactive unless --auto-approve).                  │
-╰─────────────────────────────────────────────────────────────────────────────────────────────────╯
+│ destroy   Destroy the managed infrastructure (interactive unless --auto-approve).                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 You'll use `nac init`, `nac validate`, `nac plan`, `nac apply`, and `nac
@@ -221,7 +221,7 @@ is on before you start editing.
 
 ### Clone the starter repository
 
-You should already have `/Desktop/network-as-code` open in VS Code and a
+You should already have the `network-as-code` desktop folder open in VS Code and a
 WSL terminal running inside it, from [part 1](#1-windows-jump-machine). From
 that WSL terminal, clone the public starter repo directly into the current
 (empty) folder:
@@ -229,6 +229,11 @@ that WSL terminal, clone the public starter repo directly into the current
 ```sh
 git clone <starter-repo-url> .
 ```
+
+!!! warning "Don't miss the trailing `.`"
+    The `.` at the end tells git to clone into the current folder. Without
+    it, git creates a new subfolder named after the repo, and the paths used
+    in the rest of this lab won't match.
 
 This is your workspace for both tracks - it now contains a `meraki/` and an
 `ios-xe/` folder, each with its own `main.tf`, `data/`, and `data-lab-task/`.
@@ -244,12 +249,13 @@ This is your workspace for both tracks - it now contains a `meraki/` and an
 Throughout this lab you'll switch frequently between editing YAML in VS Code
 and running Terraform in the WSL terminal. Autosave means every edit is
 written to disk immediately, so the terminal always sees your latest changes
-without you having to remember to save manually. It should already be enabled
-on your lab machine - just confirm it before you start editing:
+without you having to remember to save manually.
+
+On the jump machine, Autosave is already enabled - nothing to do. If you're
+working from your own laptop, turn it on in VS Code:
 
 1. Click **File** in the VS Code menu bar.
-2. Check that **Auto Save** already has a checkmark next to it. If not,
-   click it to turn it on.
+2. Click **Auto Save** so it has a checkmark next to it.
 
 !!! tip "Verify it's on"
     With Auto Save enabled, the dot on a file's editor tab (shown for
@@ -259,7 +265,7 @@ on your lab machine - just confirm it before you start editing:
 ### Project structure
 
 Before touching Terraform or `.env`, take a quick look at what's actually
-inside `/Desktop/network-as-code`:
+inside `network-as-code`:
 
 ```text
 network-as-code/
@@ -289,7 +295,8 @@ in it before you start running `nac` against it. Here's `meraki/main.tf`:
 
 ```hcl title="meraki/main.tf"
 module "meraki" {
-  source           = "github.com/netascode/terraform-meraki-nac-meraki?ref=v0.13.0-beta.1"
+  source           = "netascode/nac-meraki/meraki"
+  version          = "0.13.0-beta.1"
   yaml_directories = ["data"]
 }
 ```
@@ -306,17 +313,20 @@ Understanding the configuration:
   are reusable Terraform configurations that encapsulate infrastructure
   logic.
 - **`source`** - tells Terraform where to find the module. This points to
-  the Network as Code for Meraki module on GitHub, published by Cisco under
-  the `netascode` organization. The module handles all the complexity of
-  translating YAML configurations into the Terraform HashiCorp Configuration
-  Language (HCL) code needed by the Meraki Terraform provider. The `?ref=`
-  suffix pins `source` to a specific version - here, the `v0.13.0-beta.1`
-  release tag - instead of tracking the latest commit on the module's
-  default branch. You could instead pin to:
-    - A different release tag, e.g. `?ref=v1.4.0`.
-    - An exact commit, e.g.
-      `?ref=a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0`, when you need more
-      granularity than a tag provides.
+  the Network as Code for Meraki module on the [Terraform
+  Registry](https://registry.terraform.io/modules/netascode/nac-meraki/meraki),
+  published by Cisco under the `netascode` namespace. The module handles all
+  the complexity of translating YAML configurations into the Terraform
+  HashiCorp Configuration Language (HCL) code needed by the Meraki Terraform
+  provider.
+- **`version = "0.13.0-beta.1"`** - pins the module to an exact release
+  instead of whatever is newest on the Registry, so every run (yours, your
+  teammates', and the CI pipeline's) uses the same module code. This lab uses
+  a pre-release (`-beta.1`) version. Terraform only selects a pre-release
+  when you name it exactly - a range like `>= 0.13.0` never matches one - so
+  for stable releases you could instead write:
+    - An exact version, e.g. `version = "0.12.0"`.
+    - A range that accepts patch updates, e.g. `version = "~> 0.12.0"`.
 - **`yaml_directories = ["data"]`** - specifies which directories contain
   your YAML configuration files. Terraform automatically discovers and
   processes every YAML file within the `data/` folder - more flexible than

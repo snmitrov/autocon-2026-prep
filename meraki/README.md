@@ -1,4 +1,4 @@
-# Autocon 2026 – Meraki Network-as-Code Lab
+# AutoCon 6 – Meraki Network-as-Code Lab
 
 ## Overview
 

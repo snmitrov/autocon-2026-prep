@@ -6,10 +6,9 @@
 
 module "iosxe" {
   source  = "netascode/nac-iosxe/iosxe"
-  version = "1.0.0"
+  version = "1.1.0-beta.1"
 
   yaml_directories   = ["data"]
-  write_model_file   = "xe_merged_config.nac.yaml"
   device_transaction = true
 }
 

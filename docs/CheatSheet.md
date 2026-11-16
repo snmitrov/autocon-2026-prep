@@ -9,7 +9,7 @@ both parts of the workshop.
 |---|---|---|---|
 | Meraki Dashboard | [dashboard.meraki.com](https://dashboard.meraki.com) | *(provided separately)* | *(provided separately)* |
 | Starter Repo (public, clone from here) | `TODO-starter-repo-url` | - | - |
-| GitLab (your project, push here) | `TODO-gitlab-url` | dcloud | C1sco12345 |
+| GitLab (your project, push here) | [gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop](https://gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop) | dcloud | C1sco12345 |
 | Windows Jump Machine | `TODO-jump-host-url` | - | C1sco12345 |
 
 ### IOS-XE devices
@@ -65,44 +65,22 @@ See `meraki/README.md` and `ios-xe/README.md` for the complete variable
 lists, including the non-secret example credentials (SNMP, RADIUS, local
 status page, etc.).
 
-## Running the GitLab pipeline
+## GitLab CI/CD variables
 
-The `.env` variables above are for running Terraform **locally**. The GitLab
-pipeline (`.gitlab-ci.yml`) doesn't read `.env` - it needs its own copy of
-your pod-specific values, set as **GitLab CI/CD Variables** instead
-(Project → Settings → CI/CD → Variables → **Add variable**):
-
-<figure markdown="span">
-  ![GitLab project Settings > CI/CD > Variables](assets/cicd-variable-1-annotated.png){ width="80%" }<figcaption>In
-  your GitLab project: **(1)** Settings → **(2)** CI/CD → **(3)** Variables,
-  then **Add variable**.</figcaption>
-</figure>
-
-When you add `MERAKI_API_KEY` (masked + protected), add the five variables
-listed alongside it below - one shared with your partner (`org_name`) and
-four specific to your pod. They are kept out of `.gitlab-ci.yml` so nobody
-has to edit the pipeline file (and so pod hardware serials don't end up
-committed to Git history):
+The pipeline doesn't read `.env`. It needs these six values as CI/CD
+variables in your GitLab project (**Settings > CI/CD > Variables**) - see
+[step 7](Meraki07_cicd.md#add-your-cicd-variables) for how to add them.
+Leave **Protect variable** unticked for all of them, and mask
+`MERAKI_API_KEY`.
 
 | Variable | Value |
 |---|---|
-| `MERAKI_API_KEY` | your personal Meraki Dashboard API key |
+| `MERAKI_API_KEY` | your personal Meraki Dashboard API key (masked) |
 | `org_name` | your workshop's Meraki organization name |
 | `branch_name` | your pod's unique network name |
 | `branch_mx_serial` | your pod's MX appliance serial |
 | `branch_ms_serial` | your pod's MS switch serial |
 | `branch_cw_serial` | your pod's CW access point serial |
-
-<figure markdown="span">
-  ![Add variable dialog, populated with an example key and value](assets/populate-variable.png){ width="50%" }<figcaption>The
-  **Add variable** dialog, with `MERAKI_API_KEY` as an example - set
-  **Visibility** to **Masked** and check **Protect variable** for this one,
-  since it's the one real secret.</figcaption>
-</figure>
-
-Everything else the pipeline needs (shared hub network name, example SNMP/
-RADIUS/local-status-page credentials, Terraform state backend settings) is
-already defined inline in `.gitlab-ci.yml` and needs no changes.
 
 ## YAML syntax quick reference
 

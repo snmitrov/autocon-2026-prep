@@ -1,136 +1,264 @@
 # Step 7 - Configure Meraki Networks with a CI/CD Pipeline
 
-Up until now you've driven Terraform manually: `init`, `plan`, `apply`.
-That's fine for learning, but production teams run the same workflow through
-CI/CD so every change is validated, previewed, applied, and tested the same
-way - without a human typing commands. In this task you'll do exactly that,
-using the GitLab pipeline already configured in this repo (`.gitlab-ci.yml`
-at the repo root).
+So far you've run the nac loop by hand, on your own machine. In
+production, a **CI/CD pipeline** runs the same commands automatically for
+every change. In this step you hand your network over to a GitLab pipeline,
+which gives a team:
 
-## What You'll Learn
+- **A single source of truth** - the Git repo, not someone's laptop,
+  defines what's deployed.
+- **Parallel work** - several people prepare changes on their own branches
+  at the same time, and each one is reviewed before it goes live.
+- **A full audit log** - every change is a commit and a merge request:
+  who changed what, when, why, and who approved it.
+- **The same execution environment for everyone** - every change runs
+  through the same container, tool versions, and checks, no matter who
+  makes it.
 
-- How this repo's pipeline maps the steps you've run by hand (`init`,
-  `plan`, `apply`) onto `validate`, `plan`, `deploy`, and `test` stages
-- Why merge request pipelines only preview a change, while pipelines on
-  `main` actually deploy it
-- How to push a change, watch the pipeline run, and confirm it actually
-  changed something in your Meraki organization
+## CI/CD in a Nutshell
 
-## Pipeline Anatomy
+A few terms you'll meet in this step:
 
-Every push and every merge request triggers a pipeline. Which stages actually
-*run* depends on the branch - that's the guardrail against accidental
-changes to a live Meraki organization:
+- **Branch** - a separate line of work in Git. `main` holds what's
+  deployed; you make changes on a **feature branch** and merge them in
+  when they're ready.
+- **Push** - uploads your commits to the server, here your GitLab
+  project.
+- **Merge request (MR)** - GitLab's request to merge a feature branch into
+  `main`. It's where a change is reviewed before it goes live.
+- **Pipeline** - a set of **jobs** GitLab runs automatically on every push,
+  defined in `.gitlab-ci.yml` at the repo root. Each job runs a few
+  commands in a fresh container and can keep files it produced as
+  **artifacts**.
 
-| Stage | Runs | What it does |
-|---|---|---|
-| `validate` | every push/MR | `terraform fmt -check`, then `nac-validate` against the merged model |
-| `plan` | MR or `main` | `terraform plan`, saved as `plan.tfplan`/`plan.txt`/`plan.json` job artifacts |
-| `deploy` | `main` only | `terraform apply` of the saved plan - the only stage that actually changes your Meraki organization |
-| `test` (`idempotency-test` + `config-test`) | `main` only, after `deploy` | re-plans to confirm no drift, and runs the `meraki/tests/templates/` Robot Framework suite against the live Dashboard API |
-| `rollback` | `main` only, **on failure** of `deploy` | `terraform destroy`, as a safety net for a partially-applied change |
+In this lab, the flow looks like this:
 
-!!! note "Merge requests only preview"
-    Opening a merge request from a feature branch runs `validate` + `plan`
-    only - it never touches your Meraki organization. `plan`'s output is
-    attached to the pipeline as a downloadable artifact (`plan.txt`), so a
-    reviewer can see exactly what would change before anything merges.
-    Pushing or merging to `main` is the only thing that triggers `deploy`.
-
-## State
-
-The pipeline stores Terraform state on GitLab itself, via Terraform's `http`
-backend - keyed per branch (`TF_STATE_NAME: meraki-${CI_COMMIT_REF_SLUG}`),
-so your pod's branch doesn't collide with anyone else's pipeline runs. The
-backend credentials (`TF_HTTP_*`) are derived entirely from GitLab's own
-predefined CI/CD variables (`CI_JOB_TOKEN`, `CI_PROJECT_ID`, ...) - nothing
-to configure by hand.
-
-## Before You Run It: CI/CD Variables
-
-The pipeline needs the same pod-specific values your local `.env` provides -
-`MERAKI_API_KEY`, `org_name`, `branch_name`, `branch_mx_serial`,
-`branch_ms_serial`, `branch_cw_serial` - set as **GitLab CI/CD Variables**
-instead, since the pipeline never reads your local `.env`. See the
-[Cheat Sheet](CheatSheet.md) for exactly how to add them and where to find
-each value.
-
-## Point Your Repo at GitLab
-
-Up to now, `origin` on your cloned repo still points at the public starter
-repo from [Environment Setup](Intro02_environment.md) - that's where you
-cloned from, not where the pipeline lives. Before pushing anything,
-repoint `origin` at your own GitLab project (the URL from your proctor or
-the [Cheat Sheet](CheatSheet.md)):
-
-```sh
-git remote set-url origin <your-gitlab-project-url>
-git remote -v   # confirm origin now points at GitLab
+```mermaid
+flowchart LR
+    A["Push a<br/>feature branch"] --> B["Open a merge request<br/>validate + plan"]
+    B --> C["Review<br/>the plan"]
+    C --> D["Merge into main<br/>validate + plan +<br/>deploy + test"]
 ```
 
-From here on, `git push` goes to your GitLab project, not the starter repo.
+The pipeline in this repo has four jobs - the same `nac` commands you ran
+by hand:
 
-## Make a Change
+| Job | Runs on | What it does |
+|---|---|---|
+| `validate` | every push | `nac validate` |
+| `plan` | merge requests and `main` | `nac plan`, kept as an artifact for review |
+| `deploy` | `main` only | `nac apply` of that plan - the only job that changes your Meraki organization |
+| `test` | `main` only | `nac test` against the live Dashboard |
 
-From your WSL terminal, in the repo you already cloned in
-[Environment Setup](Intro02_environment.md), create a feature branch:
+A merge request only *previews* a change. Nothing is deployed until you
+merge it into `main`.
+
+## Store the State in GitLab
+
+Every pipeline job starts from a fresh copy of the repo and is thrown away
+afterwards, so a local `terraform.tfstate` would be lost after each run.
+The pipeline stores the state in your GitLab project instead. Add a
+`terraform` block at the top of `meraki/main.tf` in VS Code:
+
+```hcl
+terraform {
+  backend "http" {
+    skip_cert_verification = true
+  }
+}
+
+module "meraki" {
+  source  = "netascode/nac-meraki/meraki"
+  version = "0.13.0-beta.1"
+
+  yaml_directories = ["data"]
+}
+```
+
+`skip_cert_verification` is needed because the lab's GitLab uses a
+self-signed certificate. The rest - where the state lives and how to log
+in - the pipeline fills in through variables in `.gitlab-ci.yml`.
+
+This state starts empty, which is why you ran `nac destroy` at the end of
+[step 6](Meraki06_templates.md#clean-up-run-nac-destroy): the pipeline's
+first run rebuilds your branch network from scratch. From here on, make
+every change through the pipeline - local `nac` commands no longer have
+access to the state.
+
+## Open Your GitLab Project
+
+Open your GitLab project in the browser and log in - URL and login are in
+the [Cheat Sheet](CheatSheet.md). The menu on the left is where you'll find
+everything in this step:
+
+- **Settings > CI/CD** - the pipeline's variables
+- **Code > Merge requests** - your merge requests
+- **Build > Pipelines** - every pipeline run, its jobs, and their logs
+
+## Add Your CI/CD Variables
+
+The pipeline can't read your local `.env`, so it needs its own copy of
+your pod-specific values. Open `.env` in VS Code to look them up:
+
+| Variable | Value |
+|---|---|
+| `MERAKI_API_KEY` | your personal Meraki Dashboard API key |
+| `org_name` | your workshop's Meraki organization name |
+| `branch_name` | your pod's unique network name |
+| `branch_mx_serial` | your pod's MX appliance serial |
+| `branch_ms_serial` | your pod's MS switch serial |
+| `branch_cw_serial` | your pod's CW access point serial |
+
+Everything else the pipeline needs is already in `.gitlab-ci.yml`.
+
+In GitLab, go to **Settings > CI/CD**, expand **Variables**, and click
+**Add variable**:
+
+<figure markdown="span">
+  ![GitLab project Settings > CI/CD > Variables](assets/cicd-variable-1-annotated.png){ width="80%" }<figcaption>**(1)**
+  Settings, **(2)** CI/CD, **(3)** Variables, then **Add
+  variable**.</figcaption>
+</figure>
+
+For each of the six variables:
+
+1. Under **Visibility**, pick **Masked** for `MERAKI_API_KEY`, so it never
+   shows up in job logs. Keep **Visible** for the other five.
+2. Leave **Protect variable** unticked - protected variables only reach
+   pipelines on `main`, so the merge request pipeline would fail.
+3. Enter the name under **Key** and the value under **Value** (without
+   quotes), then click **Add variable**.
+
+<figure markdown="span">
+  ![Add variable dialog, populated with an example key and value](assets/populate-variable.png){ width="50%" }<figcaption>The
+  **Add variable** dialog. Leave the other fields as they are.</figcaption>
+</figure>
+
+## Connect Your Repo to GitLab
+
+Your repo still points at the public starter repo you cloned in
+[Environment Setup](Intro02_environment.md). In your WSL terminal, in that
+repo, point it at your GitLab project instead, and do a one-time Git setup:
+
+```sh
+git remote set-url origin https://gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop
+git config --global http.sslVerify false
+git config --global credential.helper 'cache --timeout=3600'
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+- `http.sslVerify false` accepts the lab GitLab's self-signed certificate.
+  Only do this on a lab machine.
+- `credential.helper` remembers your GitLab login for an hour.
+- Git labels every commit with a name and email - any will do.
+
+Run all `git` commands in this step from the WSL terminal: VS Code's
+built-in Git buttons use a separate Git installation without this setup.
+
+## Push `main` First
+
+Your GitLab project starts empty. Push `main` first, unchanged, so there is
+a `main` to merge into:
+
+```sh
+git push -o ci.skip -u origin main
+```
+
+When asked, enter your GitLab login from the [Cheat Sheet](CheatSheet.md).
+`-o ci.skip` skips the pipeline for this push - there's nothing to deploy
+yet.
+
+!!! warning "Push `main` before any other branch"
+    GitLab makes the first branch pushed to an empty project its **default
+    branch**, and the pipeline deploys from the default branch.
+
+## Push Your Configuration
+
+Create a feature branch, commit everything under `meraki/` - your updated
+`main.tf` and the files you moved into `data/` in steps 2-6 - and push it:
 
 ```sh
 git checkout -b cicd-demo
-```
-
-Edit one of the files you already deployed by hand earlier in this chapter -
-for example, change a tag or a description in `meraki/data/3_networks.nac.yaml`
-- then commit and push:
-
-```sh
-git add meraki/data/3_networks.nac.yaml
-git commit -m "Test CI/CD pipeline"
+git add meraki/
+git commit -m "Deploy the branch network through the pipeline"
 git push -u origin cicd-demo
 ```
 
-## Open a Merge Request and Watch It Preview
+## Open a Merge Request
 
-In GitLab (see the [Cheat Sheet](CheatSheet.md) for the URL and login), open
-a merge request from `cicd-demo` into `main`. Go to **Build → Pipelines** and
-watch `validate` and `plan` run - `deploy` and `test` stay skipped; they
-don't run on an MR pipeline.
+The output of `git push` ends with a link to create a merge request for
+`cicd-demo` - open it in the browser. (Alternatively, go to **Code > Merge
+requests** and click **New merge request**, with `cicd-demo` as source and
+`main` as target.) Keep the defaults and click **Create merge request**.
 
-Click the `plan` job and open its `plan.txt` artifact to review exactly what
-would change before merging.
+The merge request starts a pipeline with `validate` and `plan`. Its status
+shows on the merge request's **Overview** tab - click the pipeline to see
+its jobs, and click a job to see its log.
 
-## Merge and Watch It Deploy
+## Review the Plan
 
-Merge the MR into `main`. This re-triggers the pipeline, now with every stage
-active. `deploy` runs `terraform apply` against your real Meraki
-organization.
+Once `plan` is done, the **Overview** tab shows a Terraform report: how many
+resources the change would add, change, and delete. For the full plan,
+open the `plan` job, click **Browse** under **Job artifacts** on the right,
+and open `meraki/plan.txt`.
 
-!!! tip "Confirm it actually changed something"
-    A green `deploy` job only proves the stage finished without error - not
-    that anything changed (a no-op apply against already-matching state is
-    also green). Open the `deploy` job log and look for the summary line:
+Because the pipeline's state starts empty, this first plan rebuilds your
+whole branch network: only additions, nothing to change or delete.
 
-    ```text
-    Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
-    ```
+## Merge and Deploy
 
-    All zeros means nothing was pushed - check that your change actually
-    made it into `main`, then re-run the pipeline.
+On the merge request's **Overview** tab, click **Merge**. This starts a new
+pipeline on `main` - find it under **Build > Pipelines**. This time all four
+jobs run: `deploy` applies the plan to your Meraki organization, and `test`
+checks the result. The `deploy` job log ends with:
 
-After `deploy` succeeds, `idempotency-test` re-plans and fails the pipeline
-if it detects drift, and `config-test` runs the Robot Framework suite in
-`meraki/tests/templates/` against the live Dashboard API.
+```text
+Apply complete! Resources: N added, 0 changed, 0 destroyed.
+```
 
-## Verify in the Meraki Dashboard (Optional)
+The pipeline's **Tests** tab lists the test results. Your branch network is
+back in the [Meraki Dashboard](https://dashboard.meraki.com), now managed
+by the pipeline.
 
-Log in to the [Meraki Dashboard](https://dashboard.meraki.com) and confirm
-the change you pushed is reflected on your pod's branch network.
+## Make a Change
 
-## If Deploy Fails
+Every change now takes the same route. Start a new branch from the latest
+`main`:
 
-If `deploy` fails, the `rollback` job runs automatically (`main` only,
-`when: on_failure`) and runs `terraform destroy` to remove whatever was
-partially applied, instead of leaving your organization half-configured.
+```sh
+git checkout main
+git pull
+git checkout -b cicd-change
+```
+
+Change the `notes` of your network in `meraki/data/3_networks.nac.yaml`,
+then commit and push:
+
+```sh
+git add meraki/data/3_networks.nac.yaml
+git commit -m "Update the network notes"
+git push -u origin cicd-change
+```
+
+Open a merge request again. This time the Terraform report shows a single
+change. Merge it, and check the `deploy` job log for
+`Apply complete! Resources: 0 added, 1 changed, 0 destroyed.` - then find
+the new notes in the Dashboard.
+
+## If a Job Fails
+
+Open the failed job and read its log - the error is the same you'd have
+seen running the command locally.
+
+- `validate` or `plan` failed: nothing was deployed. Fix the YAML on your
+  branch, commit, and push again - the merge request picks up the new
+  pipeline.
+- `deploy` failed: whatever was applied before the error stays applied.
+  Start a new pipeline on `main` under **Build > Pipelines > New
+  pipeline** - retrying only the `deploy` job would apply the old plan. If
+  it failed right after claiming a device with a `404`, a new pipeline is
+  usually enough.
 
 ---
 

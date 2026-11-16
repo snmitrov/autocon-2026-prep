@@ -114,8 +114,8 @@ how Network as Code handles it:
 When you run `nac apply` locally, Terraform needs to remember what it
 already created so the next `plan` can compare your YAML against reality
 instead of rediscovering everything from the Dashboard. That record is the
-**state file**. `meraki/main.tf` leaves its `backend "http" {}` block
-commented out, so Terraform falls back to its default: a **local backend**
+**state file**. `meraki/main.tf` doesn't configure a backend, so Terraform
+falls back to its default: a **local backend**
 that writes a `terraform.tfstate` JSON file straight into `meraki/`, next to
 `main.tf`.
 

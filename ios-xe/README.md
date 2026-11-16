@@ -1,4 +1,4 @@
-# Autocon 2026 – IOS-XE Network-as-Code Lab
+# AutoCon 6 – IOS-XE Network-as-Code Lab
 
 ## Overview
 
@@ -110,6 +110,6 @@ terraform apply
   Needs the merged model written to disk first:
 
   ```sh
-  terraform apply -target=module.iosxe.module.model -auto-approve
-  nac-test -d ./xe_merged_config.nac.yaml -t ./tests/templates -o ./tests/results
+  terraform apply -target=module.iosxe.local_sensitive_file.model -auto-approve
+  nac-test -d ./model.yaml -t ./tests/templates -o ./tests/results
   ```

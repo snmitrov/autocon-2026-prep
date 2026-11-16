@@ -28,7 +28,7 @@
     <text x="135" y="117" fill="#cfe3f7">declarative YAML</text>
     <rect x="268" y="42" width="190" height="96" rx="10" fill="#12304f" stroke="#02C8FF"/>
     <text x="363" y="72" font-weight="700" fill="#fff">NaC module</text>
-    <text x="363" y="95" fill="#cfe3f7">merges data/ by name,</text>
+    <text x="363" y="95" fill="#cfe3f7">deep-merges data/,</text>
     <text x="363" y="117" fill="#cfe3f7">renders the data model</text>
     <rect x="496" y="42" width="190" height="96" rx="10" fill="#12304f" stroke="#02C8FF"/>
     <text x="591" y="72" font-weight="700" fill="#fff">Provider</text>

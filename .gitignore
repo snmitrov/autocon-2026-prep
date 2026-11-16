@@ -9,6 +9,7 @@ xe_merged_config.nac.yaml
 site/
 .cache/
 __pycache__/
+.venv/
 
 .env
 *.env
@@ -28,4 +29,5 @@ meraki/meraki_api_throttle.lock
 meraki/test_output.txt
 meraki/tests/results/
 meraki/model.yaml
+ios-xe/model.yaml
 plan.tfplan

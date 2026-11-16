@@ -1,7 +1,7 @@
 ---
 site_name: "From Network Change to Code: A Hands-on Network as Code Workshop"
 site_url: "https://snmitrov.github.io/autocon-2026/"
-site_description: "Hands-on lab for Network as Code across Meraki and IOS-XE - Terraform + YAML, authoring direct configuration then templating it, for Autocon 2026."
+site_description: "Hands-on lab for Network as Code across Meraki and IOS-XE - Terraform + YAML, authoring direct configuration then templating it, for AutoCon 6."
 site_author: "Snezana Mitrovic, Daniel Schmidt, Justin Burnette"
 copyright: Copyright &copy; {year} # This parameter will auto-update the year in HTML pages based on the build date
 theme:

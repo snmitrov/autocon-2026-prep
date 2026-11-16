@@ -35,12 +35,12 @@ device group > global. This file defines two things:
 iosxe:
   global:
     variables:
-      SITE: "Autocon 2026 IOS XE Lab"
+      SITE: "AutoCon 6 IOS XE Lab"
     configuration:
       banner:
         login: |-
           #########################################
-          #   Welcome to the Autocon IOS XE Lab!  #
+          #   Welcome to the AutoCon IOS XE Lab!  #
           #########################################
           Site:   ${SITE}
           Device: ${HOSTNAME}

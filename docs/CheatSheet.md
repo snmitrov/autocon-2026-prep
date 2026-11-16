@@ -109,10 +109,12 @@ already defined inline in `.gitlab-ci.yml` and needs no changes.
   `VAR_NAME` at apply time. Keeps secrets and pod-specific values (like
   `branch_name`) out of version control while the YAML structure stays
   stable.
-- **Merge by `name`** - the `nac-*` Terraform modules read every YAML file
-  under `data/`, deep-merging them into one model by matching `name` at each
-  nesting level. Two files both containing `name: !env branch_name` merge
-  into a single object instead of producing two.
+- **Deep merge** - the `nac-*` Terraform modules read every YAML file under
+  `data/` and deep-merge them into one model. Dictionaries merge key by key;
+  two list entries merge into one when all the scalar attributes they share
+  have equal values (typically the same `name`), otherwise both are kept.
+  Two files both containing `name: !env branch_name` merge into a single
+  object instead of producing two.
 - **File naming is reading order, not deployment order** - numeric prefixes
   (`1_`, `2_`, `3_`...) are a suggested teaching path; Terraform builds its
   own dependency graph from the merged model regardless of file name.

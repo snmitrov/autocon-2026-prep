@@ -393,13 +393,13 @@ here.
 
 Part 2 of the lab uses four virtualized IOS-XE switches (`Border`, `Core`,
 `Access1`, `Access2`), hosted in Cisco Modeling Labs (CML) inside the lab
-network - see [Topologies](Topologies.md) for the full diagram and IP
-addresses. All four devices share one set of SSH credentials, listed in the
-[Cheat Sheet](CheatSheet.md).
+network - see [Topologies](Topologies.md) for the full diagram. All four
+devices share one set of SSH credentials; the IP addresses and credentials
+are listed in the [Cheat Sheet](CheatSheet.md).
 
 - **From the jump machine** - use Solar-PuTTY, pre-installed with every
   device already configured. See [Part 2 - SSH to the lab
-  devices](IOSXE00_ssh.md) for the full walkthrough.
+  devices](IOSXE01_ssh.md) for the full walkthrough.
 - **Over VPN, from your own laptop** - SSH to each device's IP address
   directly, using the credentials in the Cheat Sheet.
 

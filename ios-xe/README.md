@@ -17,12 +17,16 @@ result. This means:
 - File names and the order files are read in have **no effect** on the
   resulting configuration or on Terraform's actual apply order — Terraform
   builds its own resource dependency graph from the merged model.
-- The `1_`, `2_`, `3_`... prefixes on the files in `data/` are purely a
-  **reading / teaching order** — a suggested path from "global settings and
-  per-device identity/uplinks" to "the templating/indirection pattern" at the
-  end, not a staged deployment mechanism. The two `4_` files share a prefix on
-  purpose: the template library and the device group that applies it are a
-  matched pair and are always read (and deployed) together.
+- The `2_`, `3_`, `4_`... prefixes on the files match the step numbers in the
+  lab guide (step 1 is SSH access, so there is no `1_` file). They are purely
+  a **reading / teaching order** — a suggested path from "global settings and
+  per-device identity" to "the templating pattern" at the end, not a staged
+  deployment mechanism. The two `5_` files share a prefix on purpose: the
+  template library and the file that applies it are a matched pair and are
+  always moved (and deployed) together.
+- `data/` starts empty (only a `.gitkeep`). All of the lab's files live in
+  `data-lab-task/` until it's their turn — attendees move each file into
+  `data/` as they reach that step.
 
 The `netascode/nac-iosxe` provider (`CiscoDevNet/iosxe`) talks to devices over
 **NETCONF only** (no RESTCONF) — each device must have `netconf-yang` enabled.
@@ -31,10 +35,11 @@ The `netascode/nac-iosxe` provider (`CiscoDevNet/iosxe`) talks to devices over
 
 | File | Introduces |
 |---|---|
-| `data/1_global.nac.yaml` | Global settings shared by every device: the `${SITE}` variable, a login banner that references both `${SITE}` and the per-device `${HOSTNAME}` variable, and `system.hostname` set from `${HOSTNAME}`. |
-| `data/devices/*.nac.yaml` | Per-device registration (`name`, `host`) and the `HOSTNAME` variable that resolves the global banner/hostname template for that device. |
+| `data/2_global.nac.yaml` | Global settings shared by every device: the `${SITE}` variable, a login banner that references both `${SITE}` and the per-device `${HOSTNAME}` variable, and `system.hostname` set from `${HOSTNAME}`. |
+| `data/2_inventory.nac.yaml` | Device inventory: each device's `name`, `host`, and the `HOSTNAME` variable that resolves the global banner and hostname for that device. |
+| `data/2_border.nac.yaml` | Configuration for `Border` only - a prefix list and a route map that matches on it - merged into the inventory entry by `name`. It's a lab example, not a complete routing policy, there to exercise the module's rule `313` and its prefix-list test. |
 | `data/3_device_groups.nac.yaml` | One device group, `ACCESS_SWITCHES` (`Access1`, `Access2`), grouping the two access-layer switches for config shared between them. Depends conceptually on the devices defined in the previous step. |
-| `data/4_templates.nac.yaml` + `data/4_templates_assignment.nac.yaml` | Introduces the templating/indirection pattern, as a paired step — deployed together since one is meaningless without the other. `4_templates.nac.yaml` is the template library (`access_switch_vlans`, a `type: model` template defining VLANs 10/DATA, 20/VOICE, 99/MGMT); `4_templates_assignment.nac.yaml` applies that template to the `ACCESS_SWITCHES` device group by matching `name: ACCESS_SWITCHES`, merging into the group defined in step 3. |
+| `data/4_templates.nac.yaml` + `data/4_vlan_groups.nac.yaml` | The templating pattern, as a paired step. `4_templates.nac.yaml` defines one `type: model` template, `vlan`, whose ID and name come from the `${VLAN_ID}` and `${VLAN_NAME}` variables. `4_vlan_groups.nac.yaml` creates one device group per VLAN (`VLAN_DATA` 10, `VLAN_MGMT` 99) that lists the devices to deploy it to, references the template, and sets the variables. |
 
 ## Topology
 
@@ -74,42 +79,32 @@ yet — only device identity (`name`/`host`/`HOSTNAME`) is currently modeled.
 All on VLAN1, subnet `198.18.128.0/18`, default route via gateway
 `198.18.128.1`, reachable through the CML "System Bridge" external connector.
 
-## Applying the configuration
+## Running the lab
+
+All commands run from this folder, after `source ../.env`:
 
 ```sh
-terraform init
-terraform plan
-terraform apply
+nac setup      # once: check prerequisites
+nac init       # once: download the module and the IOS XE provider
+nac validate   # syntax + semantic validation
+nac plan       # preview the changes (saved to plan.tfplan)
+nac apply      # apply the saved plan - no confirmation prompt
+nac test       # post-deployment tests against the live devices
 ```
 
-## Testing
+`nac` drives Terraform, `nac-validate`, and `nac-test` for you — there's no
+need to call any of them directly.
 
-- `rules/` holds [`nac-validate`](https://github.com/netascode/nac-validate) semantic
-  rules (e.g. `201_unique_device_host.py` blocks two devices sharing the same
-  `host`/management IP):
+## Validation and testing
 
-  ```sh
-  pip install nac-validate
-  nac-validate -r rules data/**/*.nac.yaml
-  ```
+Both come with the module — there's no schema, rule, or test file to
+maintain in this folder. After `nac init`, they live under
+`.terraform/modules/iosxe/nac/`:
 
-- `tests/templates/` holds a [`nac-test`](https://github.com/netascode/nac-test)
-  Robot Framework suite that connects to each live device over NETCONF and checks
-  it against the YAML model (`devices/hostname.robot` verifies the device's
-  configured hostname matches `devices[].variables.HOSTNAME`). The NETCONF
-  transport (`tests/templates/iosxe_netconf.py`) uses the `ncclient` package,
-  which isn't one of `nac-test`'s own dependencies and needs installing
-  separately:
-
-  ```sh
-  pip install ncclient
-  ```
-
-  It authenticates with the same `IOSXE_USERNAME` / `IOSXE_PASSWORD` /
-  `IOSXE_INSECURE` env vars as the Terraform provider (see Prerequisites above).
-  Needs the merged model written to disk first:
-
-  ```sh
-  terraform apply -target=module.iosxe.local_sensitive_file.model -auto-approve
-  nac-test -d ./model.yaml -t ./tests/templates -o ./tests/results
-  ```
+- `schema.yaml` and `rules/` — the schema and semantic rules `nac validate`
+  checks the model against. Your own rules go into a `.rules/` folder here,
+  and `nac validate` runs them alongside the module's.
+- `tests/templates/` — the Robot Framework test templates `nac test` renders
+  against the model and runs against the live devices. Results go to
+  `tests/results/`; open `tests/results/combined_summary.html` for the
+  summary.

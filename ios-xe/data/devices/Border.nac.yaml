@@ -1,7 +1,0 @@
----
-iosxe:
-  devices:
-    - name: Border
-      host: 198.18.128.201
-      variables:
-        HOSTNAME: Border

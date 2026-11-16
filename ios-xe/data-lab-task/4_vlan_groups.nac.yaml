@@ -1,0 +1,23 @@
+---
+iosxe:
+  device_groups:
+    - name: VLAN_DATA
+      devices:
+        - Access1
+        - Access2
+      templates:
+        - vlan
+      variables:
+        VLAN_ID: 10
+        VLAN_NAME: DATA
+    - name: VLAN_MGMT
+      devices:
+        - Border
+        - Core
+        - Access1
+        - Access2
+      templates:
+        - vlan
+      variables:
+        VLAN_ID: 99
+        VLAN_NAME: MGMT

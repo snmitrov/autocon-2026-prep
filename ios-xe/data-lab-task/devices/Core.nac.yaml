@@ -1,7 +1,0 @@
----
-iosxe:
-  devices:
-    - name: Core
-      host: 198.18.128.202
-      variables:
-        HOSTNAME: Core

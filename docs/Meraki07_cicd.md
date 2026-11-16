@@ -134,4 +134,4 @@ partially applied, instead of leaving your organization half-configured.
 
 ---
 
-**← Previous:** [Templates](Meraki06_templates.md) · **Next:** [Part 2 - IOS-XE: SSH to devices](IOSXE00_ssh.md)
+**← Previous:** [Templates](Meraki06_templates.md) · **Next:** [Part 2 - IOS-XE: SSH to devices](IOSXE01_ssh.md)

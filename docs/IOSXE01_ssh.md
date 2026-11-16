@@ -1,5 +1,32 @@
 # Step 1 - SSH to the Lab Devices
 
+## Overview
+
+In Part 2 - IOS-XE you configure four IOS-XE devices from YAML, in the
+`ios-xe/` folder, using the
+[Network as Code for IOS XE module](https://registry.terraform.io/modules/netascode/nac-iosxe/iosxe/latest).
+As in Part 1, each step's file waits in `ios-xe/data-lab-task/`, and you
+move it into `ios-xe/data/` when you reach that step. The concepts (global →
+device group → device precedence, variables, `model` templates) follow the
+upstream
+[`nac-iosxe-learning-lab`](https://netascode.github.io/nac-iosxe-learning-lab/),
+adapted to this lab's 4-device topology.
+
+The topology is intentionally simple: `Border`, `Core`, `Access1`, and
+`Access2` - four IOS-XE devices, plus two Alpine Linux hosts (`Host1`,
+`Host2`) attached to `Access1`/`Access2` for end-to-end connectivity testing.
+Every device shares a single management subnet, `198.18.128.0/18`, on VLAN1.
+No interface or uplink wiring is modeled in the YAML - only device identity
+(`name`/`host`/`HOSTNAME`), a little `Border`-specific configuration, and,
+from step 3 onward, shared config applied via device groups and templates.
+
+| Step | What you configure | File |
+|---|---|---|
+| 1 - SSH to the lab devices (this page) | Connect to the devices and check the NETCONF prerequisites | - |
+| 2 - [Devices and global settings](IOSXE02_devices_global.md) | The four devices with a per-device `HOSTNAME` variable and a prefix list and route map on `Border`, plus a global `${SITE}` variable, login banner, and hostname | `2_inventory.nac.yaml`, `2_border.nac.yaml`, `2_global.nac.yaml` |
+| 3 - [Device groups](IOSXE03_device_groups.md) | A standard ACL for the access switches | `3_device_groups.nac.yaml` |
+| 4 - [Templates](IOSXE04_templates.md) | One VLAN template, deployed per VLAN to the devices that need it | `4_templates.nac.yaml`, `4_vlan_groups.nac.yaml` |
+
 Before diving into Network as Code automation, it's important to establish
 baseline connectivity to your IOS-XE devices and understand their current
 state. In this task, you'll use Solar-PuTTY to connect to the lab devices
@@ -19,13 +46,18 @@ configuration to the devices. See the [Cheat Sheet](CheatSheet.md) for the
 shared device credentials used throughout this section.
 
 !!! info "Why NETCONF?"
-    NETCONF is transactional. Terraform writes to the device's *candidate*
-    datastore, the device validates it, and a `commit` then swaps it into
-    the *running* configuration all at once. If anything fails, the proposed
-    change is discarded and the running configuration is untouched. RESTCONF
-    has no equivalent: it writes straight to running, one HTTP call per
-    resource, so a failure part-way through can leave a device partly
-    configured. See the [Glossary](Glossary.md) for datastore terms.
+    With the candidate datastore enabled, Terraform never writes to the
+    *running* configuration directly. Each change is first written to the
+    device's *candidate* datastore, the device validates it, and a `commit`
+    then moves it into running. If a change fails, it's discarded and the
+    running configuration is untouched. RESTCONF has no equivalent: it
+    writes straight to running. See the [Glossary](Glossary.md) for
+    datastore terms.
+
+    By default, the provider commits after every resource - the banner,
+    the hostname, each ACL - one at a time. The module can also bundle all
+    of a device's changes into a single all-or-nothing commit
+    (`device_transaction = true` in `main.tf`).
 
 ## Open Solar-PuTTY
 
@@ -65,9 +97,10 @@ Devices in this lab:
     connectivity testing. They won't be managed via Network as Code in this
     lab.
 
-!!! note "Lab topologies reference"
+!!! note "Lab reference"
     At any time during the lab, refer to [Topologies](Topologies.md) for the
-    full topology diagram, device IP addresses, and credentials.
+    full topology diagram, and to the [Cheat Sheet](CheatSheet.md) for the
+    device IP addresses and credentials.
 
 To connect to a device:
 
@@ -127,9 +160,8 @@ What these commands do:
 - **`netconf-yang`** - enables the NETCONF-over-SSH server on TCP/830. This
   is the channel Terraform uses to push YANG-modelled configuration.
 - **`netconf-yang feature candidate-datastore`** - enables the candidate
-  datastore. `ios-xe/main.tf` sets `device_transaction = true`, and the
-  [data model](https://netascode.cisco.com/docs/data_models/iosxe/entity/device/)
-  lists the candidate datastore as a prerequisite for it. Already enabled
+  datastore, so the provider stages each change there and commits it
+  instead of editing the running configuration directly. Already enabled
   on the lab devices.
 - **`username nac_admin privilege 15 ...`** - creates the administrative
   user Terraform uses for authentication. The password is stored hashed, so
@@ -160,11 +192,10 @@ write memory
 ```
 
 `netconf-yang feature candidate-datastore` turns on the candidate / commit /
-discard-changes flow that makes applies all-or-nothing. It is a
+discard-changes flow. Without it, the provider edits the running
+configuration directly. It's also a
 [documented prerequisite](https://netascode.cisco.com/docs/data_models/iosxe/entity/device/)
-for the `device_transaction = true` setting in `ios-xe/main.tf`. Without it,
-the provider edits the running configuration directly, one resource at a
-time.
+for the module's optional `device_transaction` mode.
 
 !!! warning "NETCONF takes a minute to come up"
     If you try this on your own devices after the event, allow about 60
@@ -187,8 +218,8 @@ time.
     Datastore Name             : candidate
     ```
 
-    If `candidate` is missing, `device_transaction = true` has nothing to
-    commit into and the apply will fail.
+    If `candidate` is missing, the provider writes straight to the running
+    configuration instead.
 
     From the jump host you can also open the NETCONF subsystem directly - a
     successful connection prints the device's `<hello>` message:
@@ -203,4 +234,4 @@ time.
 
 ---
 
-**← Previous:** [CI/CD pipeline](Meraki07_cicd.md) · **Next:** [Global config](IOSXE01_global.md)
+**← Previous:** [CI/CD pipeline](Meraki07_cicd.md) · **Next:** [Devices and global settings](IOSXE02_devices_global.md)

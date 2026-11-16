@@ -320,7 +320,13 @@ login security policy, and its VPN firewall rules.
 `0 to change, 0 to destroy` confirms nothing in your org already conflicts
 with what you're about to create.
 
-### `nac apply`
+Before we apply and push the changes, let's check Meraki Dashboard and see what the Login Security looks like.
+**Click Organization > Configure > Click Settings**
+<img width="785" height="449" alt="image" src="https://github.com/user-attachments/assets/47fa7ea8-b5e1-48e5-ba85-350f1d163c8d" />
+See the current settings:
+<img width="800" height="338" alt="image" src="https://github.com/user-attachments/assets/3917a258-28f4-4abb-8d89-56604173960e" />
+
+### `nac apply` Push the changes
 
 ```sh
 nac apply
@@ -350,7 +356,7 @@ Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
     sure your lab organization (`Org-[org_id]`) is selected at the top of
     the left-hand menu, then look at:
 
-    - **Login security** - **Organization > Configure > Settings**, section
+    - **Login security**:  **Click Organization > Configure > Click Settings**, section
       **Security**: passwords must differ from the last 3, strong passwords
       are enforced, accounts lock after 5 failed attempts, and users are
       logged out after 90 minutes of inactivity.

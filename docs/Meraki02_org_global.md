@@ -322,8 +322,10 @@ with what you're about to create.
 
 Before we apply and push the changes, let's check Meraki Dashboard and see what the Login Security looks like.
 **Click Organization > Configure > Click Settings**
+
 <img width="785" height="449" alt="image" src="https://github.com/user-attachments/assets/47fa7ea8-b5e1-48e5-ba85-350f1d163c8d" />
 See the current settings:
+
 <img width="800" height="338" alt="image" src="https://github.com/user-attachments/assets/3917a258-28f4-4abb-8d89-56604173960e" />
 
 ### `nac apply` Push the changes

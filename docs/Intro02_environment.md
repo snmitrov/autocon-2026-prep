@@ -112,8 +112,7 @@ on Windows without a virtual machine. WSL is pre-installed and already
 enabled on the jump machine, and you'll use it to run `git` and Terraform
 commands - most DevOps tools, including Terraform, are designed for Linux.
 
-Open a terminal in VS Code (**Terminal → New Terminal**, or
-++ctrl+grave++) - on the jump machine this opens PowerShell by default,
+Open a terminal in VS Code on the jump machine (**Terminal → New Terminal** if you don't see terminal click the 3 dots or maximize VS Code) - this opens PowerShell by default,
 already positioned in the project folder you opened earlier. Drop into the
 Linux environment by running:
 

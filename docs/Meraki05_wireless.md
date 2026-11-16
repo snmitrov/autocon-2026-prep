@@ -73,7 +73,7 @@ So far every change started in the YAML. In real life, someone eventually
 Dashboard no longer matches the YAML. That's **configuration drift**. See
 how Network as Code handles it:
 
-1. In the Dashboard, go to **Wireless > Configure > Access Control**, pick
+1. In the Dashboard, go to **Wireless > Configure > Access Control**, click the drop-down menu and select
    the `Guest` SSID at the top, set **SSID status** to **Disabled**, and
    click **Save Changes**.
 2. Back in the terminal, run:

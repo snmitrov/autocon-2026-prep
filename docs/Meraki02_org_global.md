@@ -85,7 +85,7 @@ Dashboard, as the `Org-[org_id]` pattern from Step 1):
 export org_name=Org-12345678901234
 ```
 
-Your proctor also provided you the serial numbers for your pod's devices - set
+Your proctor also provided you the serial numbers for your pod's devices via email - set
 those too, along with a name of your own choosing for your branch network:
 
 ```sh

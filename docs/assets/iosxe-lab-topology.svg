@@ -1,97 +1,92 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="656" viewBox="0 0 1000 656" font-family="Roboto, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1312" viewBox="0 0 2000 1312" font-family="Roboto, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
   <!-- White-background companion to meraki_lab_diagram_v2.png, same visual
        language (black line-art boxes, green accent status dot, bold black
-       labels, blue dashed pod groupings, bold blue caption) applied to the
-       IOS-XE device topology. -->
+       labels, bold blue caption) applied to the IOS-XE device topology.
+       Coordinate system is 2x the original hand-drawn draft so stroke
+       widths and font sizes read at the same visual weight as the PNG's
+       native 2008x1316 resolution when both are displayed at equal width. -->
   <title id="t">Part 2 - IOS-XE lab topology</title>
   <desc id="d">Border connects to Core; Core connects to the two access switches Access1 and Access2; each access switch hosts one unmanaged Alpine Linux end host, Host1 and Host2. All on one shared 198.18.128.0/18 subnet.</desc>
-  <rect width="1000" height="656" fill="#ffffff"/>
+  <rect width="2000" height="1312" fill="#ffffff"/>
 
   <!-- connectors: Border -> Core -> (Access1, Access2) -> (Host1, Host2) -->
-  <g stroke="#333333" stroke-width="2" fill="none">
-    <line x1="500" y1="130" x2="500" y2="200"/>
-    <path d="M500,290 L500,320 L230,320 L230,365"/>
-    <path d="M500,320 L770,320 L770,365"/>
-    <line x1="230" y1="470" x2="230" y2="520"/>
-    <line x1="770" y1="470" x2="770" y2="520"/>
-  </g>
-
-  <!-- pod groupings (Access switch + its end host), echoing the blue dashed
-       "Unified Branch" boxes in meraki_lab_diagram_v2.png -->
-  <g stroke="#0a60ff" stroke-width="2" fill="none" stroke-dasharray="8 5">
-    <rect x="100" y="365" width="260" height="240" rx="12"/>
-    <rect x="640" y="365" width="260" height="240" rx="12"/>
+  <g stroke="#333333" stroke-width="4" fill="none">
+    <line x1="1000" y1="260" x2="1000" y2="400"/>
+    <path d="M1000,580 L1000,640 L460,640 L460,760"/>
+    <path d="M1000,640 L1540,640 L1540,760"/>
+    <line x1="460" y1="940" x2="460" y2="1040"/>
+    <line x1="1540" y1="940" x2="1540" y2="1040"/>
   </g>
 
   <!-- Border -->
   <g>
-    <rect x="400" y="40" width="200" height="90" rx="10" fill="#ffffff" stroke="#333333" stroke-width="2"/>
-    <rect x="463" y="60" width="26" height="16" rx="3" fill="none" stroke="#333333" stroke-width="2"/>
-    <rect x="468" y="70" width="2" height="4" fill="#333333"/>
-    <rect x="474" y="70" width="2" height="4" fill="#333333"/>
-    <rect x="480" y="70" width="2" height="4" fill="#333333"/>
-    <rect x="486" y="70" width="2" height="4" fill="#333333"/>
-    <circle cx="490" cy="58" r="3.5" fill="#6dbf3c"/>
-    <text x="500" y="100" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a">Border</text>
-    <text x="500" y="118" text-anchor="middle" font-size="12" fill="#666666">Edge / external-facing</text>
+    <rect x="800" y="80" width="400" height="180" rx="20" fill="#ffffff" stroke="#333333" stroke-width="4"/>
+    <rect x="926" y="120" width="52" height="32" rx="6" fill="none" stroke="#333333" stroke-width="4"/>
+    <rect x="936" y="140" width="4" height="8" fill="#333333"/>
+    <rect x="948" y="140" width="4" height="8" fill="#333333"/>
+    <rect x="960" y="140" width="4" height="8" fill="#333333"/>
+    <rect x="972" y="140" width="4" height="8" fill="#333333"/>
+    <circle cx="980" cy="116" r="7" fill="#6dbf3c"/>
+    <text x="1000" y="200" text-anchor="middle" font-size="34" font-weight="700" fill="#1a1a1a">Border</text>
+    <text x="1000" y="236" text-anchor="middle" font-size="24" fill="#666666">Edge / external-facing</text>
   </g>
 
   <!-- Core -->
   <g>
-    <rect x="400" y="200" width="200" height="90" rx="10" fill="#ffffff" stroke="#333333" stroke-width="2"/>
-    <rect x="463" y="220" width="26" height="16" rx="3" fill="none" stroke="#333333" stroke-width="2"/>
-    <rect x="468" y="230" width="2" height="4" fill="#333333"/>
-    <rect x="474" y="230" width="2" height="4" fill="#333333"/>
-    <rect x="480" y="230" width="2" height="4" fill="#333333"/>
-    <rect x="486" y="230" width="2" height="4" fill="#333333"/>
-    <circle cx="490" cy="218" r="3.5" fill="#6dbf3c"/>
-    <text x="500" y="260" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a">Core</text>
-    <text x="500" y="278" text-anchor="middle" font-size="12" fill="#666666">L3 core</text>
+    <rect x="800" y="400" width="400" height="180" rx="20" fill="#ffffff" stroke="#333333" stroke-width="4"/>
+    <rect x="926" y="440" width="52" height="32" rx="6" fill="none" stroke="#333333" stroke-width="4"/>
+    <rect x="936" y="460" width="4" height="8" fill="#333333"/>
+    <rect x="948" y="460" width="4" height="8" fill="#333333"/>
+    <rect x="960" y="460" width="4" height="8" fill="#333333"/>
+    <rect x="972" y="460" width="4" height="8" fill="#333333"/>
+    <circle cx="980" cy="436" r="7" fill="#6dbf3c"/>
+    <text x="1000" y="520" text-anchor="middle" font-size="34" font-weight="700" fill="#1a1a1a">Core</text>
+    <text x="1000" y="556" text-anchor="middle" font-size="24" fill="#666666">L3 core</text>
   </g>
 
   <!-- Access1 -->
   <g>
-    <rect x="120" y="380" width="220" height="90" rx="10" fill="#ffffff" stroke="#333333" stroke-width="2"/>
-    <rect x="183" y="400" width="26" height="16" rx="3" fill="none" stroke="#333333" stroke-width="2"/>
-    <rect x="188" y="410" width="2" height="4" fill="#333333"/>
-    <rect x="194" y="410" width="2" height="4" fill="#333333"/>
-    <rect x="200" y="410" width="2" height="4" fill="#333333"/>
-    <rect x="206" y="410" width="2" height="4" fill="#333333"/>
-    <circle cx="210" cy="398" r="3.5" fill="#6dbf3c"/>
-    <text x="230" y="440" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a">Access1</text>
-    <text x="230" y="458" text-anchor="middle" font-size="12" fill="#666666">Access switch</text>
+    <rect x="240" y="760" width="440" height="180" rx="20" fill="#ffffff" stroke="#333333" stroke-width="4"/>
+    <rect x="366" y="800" width="52" height="32" rx="6" fill="none" stroke="#333333" stroke-width="4"/>
+    <rect x="376" y="820" width="4" height="8" fill="#333333"/>
+    <rect x="388" y="820" width="4" height="8" fill="#333333"/>
+    <rect x="400" y="820" width="4" height="8" fill="#333333"/>
+    <rect x="412" y="820" width="4" height="8" fill="#333333"/>
+    <circle cx="420" cy="796" r="7" fill="#6dbf3c"/>
+    <text x="460" y="880" text-anchor="middle" font-size="34" font-weight="700" fill="#1a1a1a">Access1</text>
+    <text x="460" y="916" text-anchor="middle" font-size="24" fill="#666666">Access switch</text>
   </g>
 
   <!-- Access2 -->
   <g>
-    <rect x="660" y="380" width="220" height="90" rx="10" fill="#ffffff" stroke="#333333" stroke-width="2"/>
-    <rect x="723" y="400" width="26" height="16" rx="3" fill="none" stroke="#333333" stroke-width="2"/>
-    <rect x="728" y="410" width="2" height="4" fill="#333333"/>
-    <rect x="734" y="410" width="2" height="4" fill="#333333"/>
-    <rect x="740" y="410" width="2" height="4" fill="#333333"/>
-    <rect x="746" y="410" width="2" height="4" fill="#333333"/>
-    <circle cx="750" cy="398" r="3.5" fill="#6dbf3c"/>
-    <text x="770" y="440" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a">Access2</text>
-    <text x="770" y="458" text-anchor="middle" font-size="12" fill="#666666">Access switch</text>
+    <rect x="1320" y="760" width="440" height="180" rx="20" fill="#ffffff" stroke="#333333" stroke-width="4"/>
+    <rect x="1446" y="800" width="52" height="32" rx="6" fill="none" stroke="#333333" stroke-width="4"/>
+    <rect x="1456" y="820" width="4" height="8" fill="#333333"/>
+    <rect x="1468" y="820" width="4" height="8" fill="#333333"/>
+    <rect x="1480" y="820" width="4" height="8" fill="#333333"/>
+    <rect x="1492" y="820" width="4" height="8" fill="#333333"/>
+    <circle cx="1500" cy="796" r="7" fill="#6dbf3c"/>
+    <text x="1540" y="880" text-anchor="middle" font-size="34" font-weight="700" fill="#1a1a1a">Access2</text>
+    <text x="1540" y="916" text-anchor="middle" font-size="24" fill="#666666">Access switch</text>
   </g>
 
   <!-- Host1 (unmanaged - dashed border) -->
   <g>
-    <rect x="120" y="520" width="220" height="70" rx="10" fill="#ffffff" stroke="#9aa3ab" stroke-width="2" stroke-dasharray="6 4"/>
-    <rect x="197" y="535" width="18" height="13" rx="2" fill="none" stroke="#666666" stroke-width="2"/>
-    <line x1="206" y1="548" x2="206" y2="553" stroke="#666666" stroke-width="2"/>
-    <line x1="198" y1="553" x2="214" y2="553" stroke="#666666" stroke-width="2"/>
-    <text x="230" y="572" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1a1a">Host1 (Alpine)</text>
+    <rect x="240" y="1040" width="440" height="140" rx="20" fill="#ffffff" stroke="#9aa3ab" stroke-width="4" stroke-dasharray="12 8"/>
+    <rect x="394" y="1070" width="36" height="26" rx="4" fill="none" stroke="#666666" stroke-width="4"/>
+    <line x1="412" y1="1096" x2="412" y2="1106" stroke="#666666" stroke-width="4"/>
+    <line x1="396" y1="1106" x2="428" y2="1106" stroke="#666666" stroke-width="4"/>
+    <text x="460" y="1144" text-anchor="middle" font-size="30" font-weight="700" fill="#1a1a1a">Host1 (Alpine)</text>
   </g>
 
   <!-- Host2 (unmanaged - dashed border) -->
   <g>
-    <rect x="660" y="520" width="220" height="70" rx="10" fill="#ffffff" stroke="#9aa3ab" stroke-width="2" stroke-dasharray="6 4"/>
-    <rect x="737" y="535" width="18" height="13" rx="2" fill="none" stroke="#666666" stroke-width="2"/>
-    <line x1="746" y1="548" x2="746" y2="553" stroke="#666666" stroke-width="2"/>
-    <line x1="738" y1="553" x2="754" y2="553" stroke="#666666" stroke-width="2"/>
-    <text x="770" y="572" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1a1a">Host2 (Alpine)</text>
+    <rect x="1320" y="1040" width="440" height="140" rx="20" fill="#ffffff" stroke="#9aa3ab" stroke-width="4" stroke-dasharray="12 8"/>
+    <rect x="1474" y="1070" width="36" height="26" rx="4" fill="none" stroke="#666666" stroke-width="4"/>
+    <line x1="1492" y1="1096" x2="1492" y2="1106" stroke="#666666" stroke-width="4"/>
+    <line x1="1476" y1="1106" x2="1508" y2="1106" stroke="#666666" stroke-width="4"/>
+    <text x="1540" y="1144" text-anchor="middle" font-size="30" font-weight="700" fill="#1a1a1a">Host2 (Alpine)</text>
   </g>
 
-  <text x="500" y="630" text-anchor="middle" font-size="14" font-weight="700" fill="#0a60ff">Border, Core, Access1, Access2 are Terraform-managed; Host1/Host2 (dashed) are unmanaged end hosts - all on 198.18.128.0/18</text>
+  <text x="1000" y="1260" text-anchor="middle" font-size="28" font-weight="700" fill="#0a60ff">Border, Core, Access1, Access2 are Terraform-managed; Host1/Host2 (dashed) are unmanaged end hosts - all on 198.18.128.0/18</text>
 </svg>

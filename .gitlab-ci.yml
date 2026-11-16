@@ -49,6 +49,8 @@ workflow:
 
 variables:
   TF_IN_AUTOMATION: "true"
+  # Retry Meraki API calls that return a temporary 404
+  MERAKI_RETRY_ON_ERROR_CODES: "404"
   GIT_DEPTH: "0"
   TF_STATE_NAME: "meraki-${CI_COMMIT_REF_SLUG}"
   TF_HTTP_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME}"

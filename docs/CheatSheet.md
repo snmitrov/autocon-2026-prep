@@ -32,6 +32,7 @@ Run from `meraki/` or `ios-xe/` after sourcing your `.env`:
 
 ```sh
 source .env
+nac setup   # first time only: check prerequisites
 nac init
 nac plan
 nac apply

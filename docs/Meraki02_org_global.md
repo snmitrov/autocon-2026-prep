@@ -1,4 +1,4 @@
-# Step 3 - Configure Organization Global Settings
+# Step 2 - Configure Organization Global Settings
 
 Each lab pod shares one Meraki organization between two participants, so two
 branch networks live side by side under the same org. The organization
@@ -30,9 +30,20 @@ Two principles underpin everything from here on:
   `.nac.yaml` file there gets deep-merged into one model before anything is
   validated or applied.
 
+## Move this step's file into place
+
+The module only reads `data/` (`yaml_directories = ["data"]` in `main.tf`),
+and `data/` starts empty. Every step's file waits in `data-lab-task/` until
+it's that step's turn, and moving it into `data/` is what adds it to the
+merged model. From the repository root, move this step's file:
+
+```sh
+mv meraki/data-lab-task/2_org_global.nac.yaml meraki/data/
+```
+
 ## Open and review the file
 
-On your VSCode open `data/1_org_global.nac.yaml` and review the configuration. Near the top
+On your VSCode open `data/2_org_global.nac.yaml` and review the configuration. Near the top
 you'll find the organization block with its environment-driven variables:
 
 ```yaml
@@ -96,7 +107,7 @@ two branch networks share this organization.
     may see referenced in the schema docs: a template-scoped variable
     substituted at render time, used to make one template produce different
     output per site (non-sensitive values only). This lab's template step
-    (step 7) sticks to static values for simplicity, but `${...}` is what
+    (step 6) sticks to static values for simplicity, but `${...}` is what
     you'd reach for if the same template needed to render differently for
     every branch.
 
@@ -106,13 +117,43 @@ demonstrates automating organization creation with just a few settings.
 ## Source `.env` and Initialize Terraform
 
 With all six variables set, source the file from the repo root so
-Terraform's process picks them up, then `cd` into `meraki/` and initialize
-the module - commands like `nac init`/`plan`/`apply` always run from
-`meraki/` or `ios-xe/`, never from the repository root:
+Terraform's process picks them up, then `cd` into `meraki/` - commands like
+`nac setup`/`init`/`plan`/`apply` always run from `meraki/` or `ios-xe/`,
+never from the repository root:
 
 ```sh
 source .env
 cd meraki
+```
+
+### Check prerequisites with `nac setup`
+
+Before initializing anything, let `nac setup` check that the tools `nac`
+drives are installed and report the versions it resolved:
+
+```sh
+nac setup
+```
+
+```text
+────────────────────────────────────────────────────────────────────────────────
+Setup Summary
+────────────────────────────────────────────────────────────────────────────────
+  ✓ uv: found
+  ✓ terraform: Terraform v1.17.0 (auto-detected)
+  ✓ nac-validate: v2.1.0 (local)
+  ✓ nac-test: v2.1.0 (local)
+────────────────────────────────────────────────────────────────────────────────
+```
+
+Your versions may differ - what matters is a ✓ on every line.
+
+### Initialize the module with `nac init`
+
+With the prerequisites confirmed, initialize the working directory - this
+downloads the module and the Meraki provider:
+
+```sh
 nac init
 ```
 
@@ -136,23 +177,23 @@ Terraform has been successfully initialized!
 
 How do you know what configuration options are supported, and what YAML
 structure they expect? The full data model is published on the Network as
-Code docs site - for example, the schema for `login_security` is documented
+Code site - for example, the schema for `login_security` is documented
 at
 [netascode.cisco.com/docs/data_models/meraki/organizations/general_management/login_security](https://netascode.cisco.com/docs/data_models/meraki/organizations/general_management/login_security/).
 
 <figure markdown="span">
   ![Network as Code docs - Organization Login Security Configuration](assets/docs.png)<figcaption>The
-  `netascode.cisco.com` schema reference for `organizations.login_security` -
-  the field you're about to break on purpose below.</figcaption>
+  `netascode.cisco.com` schema reference for `organizations.login_security`</figcaption>
 </figure>
 
 !!! tip "Why `data/` only has one file so far"
-    `meraki/data/` - the directory Terraform actually reads - starts with
-    just `1_org_global.nac.yaml` in place. Every later step's file lives in
-    `meraki/data-lab-task/` until it's that step's turn: you move (or copy)
-    each file into `data/` as you reach it, which is what actually adds it
-    to the merged model. `data-lab-task/` itself is never read by
-    Terraform - it's a staging shelf, not a second source of truth.
+    `meraki/data/` - the directory Terraform actually reads - started
+    empty, and right now holds only `2_org_global.nac.yaml`, the file you
+    moved in at the start of this step. Every later step's file still lives
+    in `meraki/data-lab-task/` until it's that step's turn: you move each
+    file into `data/` as you reach it, which is what actually adds it to the
+    merged model. `data-lab-task/` itself is never read by Terraform - it's
+    a staging shelf.
 
 ## Validating before you deploy
 
@@ -164,14 +205,18 @@ of mistakes, both running before anything touches the Dashboard:
   wrong types, out-of-range numbers, missing required fields. It has no
   opinion on whether a value makes business sense, only whether it's a legal
   value for that field. Under the hood this runs on **Yamale**, a YAML
-  schema validator - the schema itself ships inside the `meraki` Terraform
-  module (`nac/schema.yaml`), not as a file in this repo, so it's
-  auto-discovered the moment `nac init` has downloaded the module.
+  schema validator, extended by `nac-validate` with additional
+  constraints. The schema itself ships inside the `meraki` Terraform module
+  (`nac/schema.yaml`), not as a file in this repo, so it's auto-discovered
+  the moment `nac init` has downloaded the module.
 - **Semantic (business-rule) validation** goes further: custom logic runs
-  against the parsed configuration to enforce policies a schema can't
-  express on its own. The module ships one such rule, as an example,
-  auto-discovered the same way. A file can pass every syntax check and
-  still fail here.
+  against the parsed configuration to enforce rules a schema can't express
+  on its own. These can be technology-specific constraints - which features
+  or settings are allowed in combination, or whether a reference points at
+  something actually defined - but also your organization's own policies,
+  such as compliance requirements or naming conventions. The module ships
+  one such rule, as an example, auto-discovered the same way. A file can
+  pass every syntax check and still fail here.
 
 ### Try it: a syntax failure
 
@@ -182,56 +227,53 @@ module's schema declares that field as `int(min=1, max=10, required=False)`
 `meraki/.terraform/modules/meraki/nac/schema.yaml` and search for
 `num_different_passwords` - that's the actual file `nac validate` reads
 against, not just this doc's description of it. From a terminal **in
-`meraki/`**, run
-`nac validate` against the file as-is first, to see a clean pass - it
-auto-discovers the module's schema (and rules) with no extra flags needed:
+`meraki/`**, run `nac validate` with the file as-is first, to see a clean
+pass - it auto-discovers the module's schema (and rules) with no extra flags
+needed:
 
 ```sh
-nac validate data/1_org_global.nac.yaml --verbosity DEBUG
+nac validate
 ```
 
 ```text
-$ terraform apply -target=module.meraki.local_sensitive_file.model -auto-approve
-✓ Render: OK (module.meraki.local_sensitive_file.model -> model.yaml)
+$ /usr/local/bin/terraform apply -target=module.meraki.local_sensitive_file.model -auto-approve
 
-$ nac-validate model.yaml data/1_org_global.nac.yaml --verbosity DEBUG
-INFO - Artifact layer [module]: module 'meraki' at .terraform/modules/meraki
-INFO - Loading schema from .terraform/modules/meraki/nac/schema.yaml
-INFO - Loading module rules from .terraform/modules/meraki/nac/rules
-INFO - Validate file: model.yaml
-INFO - Validate file: data/1_org_global.nac.yaml
-INFO - Verifying rule id 302
+────────────────────────────────────────────────────────────────────────────────
+Render Summary
+────────────────────────────────────────────────────────────────────────────────
+  ✓ Render: OK (module.meraki.local_sensitive_file.model -> model.yaml)
+────────────────────────────────────────────────────────────────────────────────
+
+$ /home/demouser/.local/bin/nac-validate model.yaml
 
 ────────────────────────────────────────────────────────────────────────────────
 Validation Summary
 ────────────────────────────────────────────────────────────────────────────────
-  ✓ Syntax validation: PASSED (2 files)
+  ✓ Syntax validation: PASSED (1 files)
   ✓ Semantic validation: PASSED
 ────────────────────────────────────────────────────────────────────────────────
 ```
 
-`nac validate` renders the merged model to `model.yaml` first (the same
-render step `nac plan`/`nac apply` use), then validates both the rendered
-model and your own file against the module's schema and rules - that's why
-two files show up in the summary instead of one. Rule `302` is the module's
-packaged semantic rule - more on it below.
+`nac validate` first renders the merged model of everything in `data/` to
+`model.yaml` (the same render step `nac plan`/`nac apply` use), then
+validates that model against the module's schema and rules. The semantic
+check runs the module's packaged rule - more on it below.
 
 Now temporarily lower `num_different_passwords` to `0` (line 13), below the
 schema's minimum, and run the exact same command again:
 
 ```sh
-nac validate data/1_org_global.nac.yaml --verbosity DEBUG
+nac validate
 ```
 
 !!! failure "Syntax validation: FAILED"
     ```text
-    DEBUG - Syntax error 'model.yaml': meraki.domains.[name=US].organizations.[name=...].login_security.num_different_passwords: 0 is less than 1
-    DEBUG - Syntax error 'data/1_org_global.nac.yaml': meraki.domains.[name=US].organizations.[name=...].login_security.num_different_passwords: 0 is less than 1
+      • model.yaml: meraki.domains.[name=US].organizations.[name=...].login_security.num_different_passwords: 0 is less than 1
 
     ────────────────────────────────────────────────────────────────────────────────
     Validation Summary
     ────────────────────────────────────────────────────────────────────────────────
-      ✗ Syntax validation: FAILED (2 errors)
+      ✗ Syntax validation: FAILED (1 error)
     ────────────────────────────────────────────────────────────────────────────────
     ```
 
@@ -248,20 +290,21 @@ identity PSK, or an SSID device-type policy - against the group policies
 actually defined on that network. Once `nac init` has downloaded the
 module, you can read its actual source at
 `meraki/.terraform/modules/meraki/nac/rules/302_group_policy_references.py`.
-The DEBUG output above already shows it running (`Verifying rule id 302`):
-it found nothing to flag, because this file doesn't define any networks,
-group policies, or references yet. You'll see it catch a real mistake once
-those exist, in [Networks](Meraki02_networks.md).
+It already ran in the clean pass above - that's the `Semantic validation:
+PASSED` line - and found nothing to flag, because this file doesn't define
+any networks, group policies, or references yet. You'll see it catch a real mistake once
+those exist, in [Networks](Meraki03_networks.md).
 
 Rule `302` ships as a single example of what's possible, not the limit of
 it - it's just one policy the module's authors chose to demonstrate.
 Nothing stops you from writing your own rules for whatever your
 organization actually cares about (a naming convention, an approved VLAN
-range, a required tag), the same way this one is written - as a Python
-class dropped into a `rules/` directory that `nac validate` auto-discovers.
+range, a required tag), written the same way as this one - as a Python
+class. You don't add them to the module, though: you put them in a
+`.rules/` directory in your own project (here `meraki/.rules/`), and
+`nac validate` runs them alongside the module's rules.
 If you'd rather not write them yourselves, Cisco Services can develop
-custom semantic rules (and schemas) for your organization's specific
-policies.
+custom semantic rules for your organization's specific policies.
 
 ## Plan and Apply
 
@@ -274,14 +317,18 @@ back to `3`, deploy it for real. Both commands run from `meraki/`.
 nac plan
 ```
 
-`plan` is read-only - it computes what Terraform *would* do without
-touching your organization, and saves the result to `plan.tfplan`. It ends
-with a summary line:
+`plan` is essentially a dry run: it reads the current state of your
+organization, computes what Terraform *would* change to match your YAML, and
+shows you that without changing anything on the Dashboard. The result is
+saved to `plan.tfplan`. Run it as often as you like - nothing is deployed
+until you run `nac apply`. It ends with a summary line:
 
 ```text
     }
 
-Plan: 4 to add, 0 to change, 0 to destroy.
+Plan: 3 to add, 0 to change, 0 to destroy.
+
+─────────────────────────────────────────────────────────────────────────────
 
 Saved the plan to: plan.tfplan
 
@@ -289,8 +336,8 @@ To perform exactly these actions, run the following command to apply:
     terraform apply "plan.tfplan"
 ```
 
-`4 to add` is this file's four resources: the merged-model file, the org's
-SNMP settings, its login security policy, and its VPN firewall rules.
+`3 to add` is this file's three resources: the org's SNMP settings, its
+login security policy, and its VPN firewall rules.
 `0 to change, 0 to destroy` confirms nothing in your org already conflicts
 with what you're about to create.
 
@@ -308,8 +355,6 @@ nac apply
     Meraki organization.
 
 ```text
-module.meraki.local_sensitive_file.model[0]: Creating...
-module.meraki.local_sensitive_file.model[0]: Creation complete after 1s [id=1071a02f3c85d841c898795b7b52ac1b58bc9d79]
 module.meraki.meraki_organization_snmp.organizations_snmp["US/Dev-SM"]: Creating...
 module.meraki.meraki_organization_login_security.organizations_login_security["US/Dev-SM"]: Creating...
 module.meraki.meraki_appliance_vpn_firewall_rules.organizations_appliance_vpn_firewall_rules["US/Dev-SM"]: Creating...
@@ -317,14 +362,32 @@ module.meraki.meraki_organization_snmp.organizations_snmp["US/Dev-SM"]: Creation
 module.meraki.meraki_organization_login_security.organizations_login_security["US/Dev-SM"]: Creation complete after 1s [id=709316941310853538]
 module.meraki.meraki_appliance_vpn_firewall_rules.organizations_appliance_vpn_firewall_rules["US/Dev-SM"]: Creation complete after 2s [id=709316941310853538]
 
-Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
 ```
 
 !!! tip "Verify in the Dashboard"
-    Log in to the Meraki Dashboard and confirm your organization now shows
-    the SNMP, login security, and VPN firewall settings from
-    `data/1_org_global.nac.yaml`.
+    Check that the settings from `data/2_org_global.nac.yaml` actually
+    landed. In the [Meraki Dashboard](https://dashboard.meraki.com), make
+    sure your lab organization (`Org-[org_id]`) is selected at the top of
+    the left-hand menu, then look at:
+
+    - **Login security** - **Organization > Configure > Settings**, section
+      **Security**: passwords must differ from the last 3, strong passwords
+      are enforced, accounts lock after 5 failed attempts, and users are
+      logged out after 90 minutes of inactivity.
+    - **SNMP** - same page, section **SNMP**: **Version 3** shows *SNMP V3
+      enabled*, while Version 2C stays disabled.
+    - **VPN firewall rules** - **Security & SD-WAN > Configure >
+      Site-to-site VPN**, section **Organization-wide settings**: the
+      **Site-to-site outbound firewall** table lists the seven rules
+      (Shared Services twice, then Data, IoT, Infra, Voice, and PCI
+      Access). This menu belongs to a network, so the `Datacenter` network
+      is selected for you - the rules are organization-wide and look the
+      same from every network.
+
+    Look, but don't change anything here: the YAML is the single source of
+    truth, and a manual edit would be overwritten by the next `nac apply`.
 
 ---
 
-**← Previous:** [Log in and identify your lab organization](Meraki00_login.md) · **Next:** [Networks and the MX appliance](Meraki02_networks.md)
+**← Previous:** [Access your Meraki organization](Meraki01_login.md) · **Next:** [Networks and the MX appliance](Meraki03_networks.md)

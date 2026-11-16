@@ -349,8 +349,9 @@ global settings](Meraki02_org_global.md#set-your-pods-values-in-env).
 !!! note "`.env` stays local - never committed"
     `.env` is gitignored - only the blank `.env.example` template is tracked
     in Git. See the [Cheat Sheet](CheatSheet.md) for `source`-ing it before
-    you run Terraform, and for the separate GitLab CI/CD Variables the
-    pipeline reads instead.
+    you run Terraform. The pipeline reads separate GitLab CI/CD variables
+    instead, which you'll add in
+    [step 7](Meraki07_cicd.md#add-your-cicd-variables).
 
 ## 3. Meraki Dashboard (BYOA)
 

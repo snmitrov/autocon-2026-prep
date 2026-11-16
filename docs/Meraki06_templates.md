@@ -135,6 +135,51 @@ but the template library itself is gone from the model - its content has
 been merged in, indistinguishable from configuration you'd written
 directly.
 
+## Clean up: run `nac destroy`
+
+In step 7, a GitLab pipeline takes over and keeps its own Terraform state
+in GitLab. That state starts empty, so it knows nothing about what you've
+deployed by hand. Before you move on, remove everything you deployed in
+steps 2-6 - the pipeline will rebuild all of it from the same YAML.
+
+!!! danger "`nac destroy` removes everything you deployed in steps 2-6"
+    `nac destroy` doesn't undo just the last step. It removes every resource
+    in your local state, `meraki/terraform.tfstate`:
+
+    - **Your branch network is deleted**, with everything configured in it:
+      VLANs, group policies, site-to-site VPN, traffic shaping, switch ports
+      and settings, SSIDs, the RF profile, and the firewall and security
+      settings from the templates.
+    - **Your MX, switch, and access point are removed from the network.**
+      They stay in the organization's inventory, unassigned, until the
+      pipeline claims them again.
+    - **The organization-wide site-to-site VPN firewall rules from step 2
+      are cleared.** Your partner shares this organization, so this affects
+      their pod too, until the next apply - theirs or your pipeline's - puts
+      the rules back.
+    - **Login security and SNMP settings from step 2 stay as they are**:
+      Terraform only stops tracking them.
+
+    There is no undo in the Dashboard. Your YAML still describes all of it,
+    though, so nothing is lost: the pipeline in step 7 deploys it again.
+
+From `meraki/`, run:
+
+```sh
+nac destroy
+```
+
+Terraform lists every resource it will destroy and ends with the summary
+`Plan: 0 to add, 0 to change, 70 to destroy.` - check that the only
+network in the list is your own branch network, then type `yes` to
+confirm. It finishes with:
+
+```text
+Destroy complete! Resources: 70 destroyed.
+```
+
+Your branch network no longer shows up in the Dashboard's network list.
+
 ---
 
 **← Previous:** [Wireless](Meraki05_wireless.md) · **Next:** [CI/CD pipeline](Meraki07_cicd.md)

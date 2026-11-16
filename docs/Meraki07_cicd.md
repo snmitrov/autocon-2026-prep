@@ -1,4 +1,4 @@
-# CI/CD Pipeline
+# Step 7 - Configure Meraki Networks with a CI/CD Pipeline
 
 Up until now you've driven Terraform manually: `init`, `plan`, `apply`.
 That's fine for learning, but production teams run the same workflow through
@@ -80,11 +80,11 @@ git checkout -b cicd-demo
 ```
 
 Edit one of the files you already deployed by hand earlier in this chapter -
-for example, change a tag or a description in `meraki/data/2_networks.nac.yaml`
+for example, change a tag or a description in `meraki/data/3_networks.nac.yaml`
 - then commit and push:
 
 ```sh
-git add meraki/data/2_networks.nac.yaml
+git add meraki/data/3_networks.nac.yaml
 git commit -m "Test CI/CD pipeline"
 git push -u origin cicd-demo
 ```
@@ -134,4 +134,4 @@ partially applied, instead of leaving your organization half-configured.
 
 ---
 
-**← Previous:** [Templates](Meraki05_templates.md) · **Next:** [Part 2 - IOS-XE: SSH to devices](IOSXE00_ssh.md)
+**← Previous:** [Templates](Meraki06_templates.md) · **Next:** [Part 2 - IOS-XE: SSH to devices](IOSXE00_ssh.md)

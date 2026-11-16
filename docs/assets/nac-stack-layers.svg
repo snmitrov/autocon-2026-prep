@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 180" width="1200" height="180" font-family="Roboto, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
-  <!-- Extracted from meraki-lab-overview.svg so the layered stack can be shown
-       on its own next to the layer table in Intro01_overview.md. Wording is
+  <!-- Shows the layered stack next to the layer table in
+       Intro01_overview.md. Wording is
        kept platform-neutral because the table beneath it covers both the
        Meraki and IOS XE tracks.
        This file is referenced from Markdown via <img src>, so the page's CSS

@@ -194,8 +194,8 @@ nac --help
 ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-You'll use `nac init`, `nac validate`, `nac plan`, `nac apply`, and `nac
-test` throughout both tracks, instead of calling Terraform or the
+You'll use `nac setup`, `nac init`, `nac validate`, `nac plan`, `nac apply`,
+and `nac test` throughout both tracks, instead of calling Terraform or the
 validation/testing tools directly.
 
 ## 2. CI/CD
@@ -272,7 +272,7 @@ network-as-code/
 ├── .env.example          # template for your pod's secrets/variables
 ├── meraki/               # Part 1 - Meraki track
 │   ├── main.tf           # the Terraform module block for this track
-│   ├── data/             # what Terraform actually reads - starts nearly empty
+│   ├── data/             # what Terraform actually reads - starts empty
 │   └── data-lab-task/    # staged files you move into data/ one step at a time
 └── ios-xe/               # Part 2 - IOS-XE track
     ├── main.tf
@@ -341,9 +341,9 @@ cp .env.example .env
 
 Everything in the file already has a working default for the lab except a
 handful of pod-specific values - you'll fill those in once you have them:
-`MERAKI_API_KEY` after [generating it](Meraki00_login.md#step-2-generate-your-meraki-api-key),
+`MERAKI_API_KEY` after [generating it](Meraki01_login.md#generate-your-meraki-api-key),
 and `org_name`/`branch_name`/the device serials once you reach [Org and
-global settings](Meraki01_org_global.md#set-your-pods-values-in-env).
+global settings](Meraki02_org_global.md#set-your-pods-values-in-env).
 
 !!! note "`.env` stays local - never committed"
     `.env` is gitignored - only the blank `.env.example` template is tracked
@@ -405,4 +405,4 @@ addresses. All four devices share one set of SSH credentials, listed in the
 
 ---
 
-**← Previous:** [Overview](Intro01_overview.md) · **Next:** [Part 1 - Meraki: log in](Meraki00_login.md)
+**← Previous:** [Overview](Intro01_overview.md) · **Next:** [Part 1 - Meraki: access your organization](Meraki01_login.md)

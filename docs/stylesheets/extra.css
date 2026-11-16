@@ -224,23 +224,14 @@
 
 
 /* ============================================================================
-   Admonition accents — thin colored edge instead of Material's default heavy
-   fill. Matches the same palette used in the diagrams.
+   Admonition accents — a thicker left edge. The color is left to Material,
+   so the edge always matches the box's own title bar, icon, and border.
    ========================================================================= */
 
 .md-typeset .admonition,
 .md-typeset details {
     border-left-width: 4px;
 }
-
-.md-typeset .admonition.note, .md-typeset details.note              { border-left-color: var(--lab-blue); }
-.md-typeset .admonition.info, .md-typeset details.info              { border-left-color: var(--lab-cyan); }
-.md-typeset .admonition.tip,  .md-typeset details.tip               { border-left-color: var(--lab-cyan); }
-.md-typeset .admonition.warning, .md-typeset details.warning        { border-left-color: var(--lab-orange); }
-.md-typeset .admonition.danger,  .md-typeset details.danger         { border-left-color: var(--lab-pink); }
-.md-typeset .admonition.failure, .md-typeset details.failure        { border-left-color: var(--lab-pink); }
-.md-typeset .admonition.example, .md-typeset details.example        { border-left-color: var(--lab-pink); }
-.md-typeset .admonition.abstract,.md-typeset details.abstract       { border-left-color: var(--lab-gray); }
 
 
 /* ============================================================================
@@ -505,8 +496,10 @@
 }
 
 /* Figures already have caption styling from the glightbox plugin; tighten
-   their top margin so the image + caption read as one unit. */
-.md-typeset figure { margin: 1.4rem 0 1.6rem; text-align: center; }
+   their top margin so the image + caption read as one unit. Keep the side
+   margins auto: Material sizes figures to fit-content, so a 0 side margin
+   left-aligns any image narrower than the column. */
+.md-typeset figure { margin: 1.4rem auto 1.6rem; text-align: center; }
 .md-typeset figcaption {
     font-size: 0.72rem;
     color: var(--md-default-fg-color--light);
@@ -817,8 +810,3 @@
     object-fit: contain;
 }
 
-/* Inline overview diagram sits smaller on the page; the lightbox (1200px) is larger. */
-.md-typeset img[src$="meraki-lab-overview.svg"] {
-    width: 90%;
-    height: auto;
-}

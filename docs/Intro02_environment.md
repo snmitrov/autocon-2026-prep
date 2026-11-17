@@ -21,9 +21,10 @@ reference.
 This lab runs on a shared Windows jump machine with VS Code, WSL, Terraform,
 and Solar-PuTTY already installed - connect to it through WebRDP.
 
-!!! note "WebRDP connection steps coming soon"
-    Instructions for connecting to your jump machine over WebRDP will be
-    added here shortly.  You can pull up the lab guide in a web browser on the WebRDP session.  (Remember when using copy and paste from a Mac, use the **control** key)
+!!! note "WebRDP connection"
+    Instructions for connecting to your jump machine over WebRDP have been sent via email.  
+    Remember you can pull up the lab guide in a web browser on the WebRDP session. Also remember 
+    when using copy and paste from a Mac, use the **control** key instead of the **command** key)
 
 !!! tip "On the lab VPN? Use an RDP client instead"
     If you're connected to the lab VPN, you can reach the jump machine with

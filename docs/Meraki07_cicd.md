@@ -141,10 +141,13 @@ Reference your .env file you editied earlier and create the six variables:
 ## Connect Your Repo to GitLab
 
 Your repo still points at the public starter repo you cloned in
-[Environment Setup](Intro02_environment.md). In your WSL terminal, in that
-repo, point it at your GitLab project instead, and do a one-time Git setup:
+[Environment Setup](Intro02_environment.md). In your WSL terminal, go back
+to the repo root - you're probably still in `meraki/` from step 6. All
+commands in the rest of this step run from there. Then point the repo at
+your GitLab project, and do a one-time Git setup:
 
 ```sh
+cd ..   # from meraki/ back to the repo root
 git remote set-url origin https://gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop
 git config --global http.sslVerify false
 git config --global credential.helper 'cache --timeout=3600'

@@ -23,7 +23,7 @@
 #   deploy   - default branch only, applies the plan from the plan job
 #   test     - default branch only, after deploy
 
-image: danischm/nac:0.5.3
+image: danischm/autocon-lab:latest
 
 workflow:
   rules:
@@ -72,9 +72,6 @@ variables:
 
 default:
   before_script:
-    # Temporary until the image ships it: nac-cli 0.2.3 renders the model
-    # before `nac test`
-    - pip install --quiet --upgrade nac-cli==0.2.3
     - cd meraki
 
 .default_branch_only: &default_branch_only

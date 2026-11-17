@@ -124,7 +124,7 @@ In GitLab, go to **Settings > CI/CD**, expand **Variables**, and click
   variable**.</figcaption>
 </figure>
 
-For each of the six variables:
+Reference your .env file you editied earlier and create the six variables:
 
 1. Under **Visibility**, pick **Masked** for `MERAKI_API_KEY`, so it never
    shows up in job logs. Keep **Visible** for the other five.

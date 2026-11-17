@@ -54,8 +54,8 @@ and the two SSIDs.
     - **Wireless > Monitor > Access Points**: the access point with your
       `branch_cw_serial`.
     - **Wireless > Configure > SSIDs**: `Data` (802.1X, VLAN 10) and
-      `Guest` (open, VLAN 50), next to the default SSID Meraki creates for
-      every network.
+      `Guest` (open, VLAN 50).  Note there is a default SSID Meraki creates for
+      every network (branch_name - Wireless WiFi).
     - **Wireless > Configure > Access Control**: pick an SSID at the top to
       see its authentication and VLAN settings.
     - **Wireless > Configure > Splash Page**: the click-through splash page

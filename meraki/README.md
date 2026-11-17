@@ -52,7 +52,7 @@ entries merge when the scalar attributes they share all have the same value
 
 | File | Introduces |
 |---|---|
-| `2_org_global.nac.yaml` | Org-wide settings: admin, `login_security` policy, org-level SNMP (v3), and the org-wide `appliance.vpn_firewall_rules` shared by every spoke via the hub. |
+| `2_org_global.nac.yaml` | Org-wide settings: `login_security` policy and org-level SNMP (v3). |
 | `3_networks.nac.yaml` | The branch network (named via `!env branch_name` — unique per attendee pod) and the unmanaged hub network. Covers network-level basics (product types, time zone, tags, local status page, SNMP, syslog, NetFlow, group policies), the MX appliance device, and appliance config authored directly as YAML: `appliance.vlans`, `appliance.vpn_site_to_site_vpn` (spoke config), `appliance.ports`, and `appliance.traffic_shaping`. |
 | `4_switching.nac.yaml` | The MS switch device per branch, with per-port-range overrides (uplink trunk, infra access ports disabled by default, AP trunk, end-user access ports with voice VLAN), switch-wide settings (management VLAN, MTU, QoS, storm control), and the wired 802.1X access policy. Depends conceptually on the VLANs defined in step 3. |
 | `5_wireless.nac.yaml` | The CW access point device per branch (claimed with tags/location only — no RF profile reference, see the known gotcha below) plus network-level `wireless.rf_profiles` and `wireless.ssids` (`Data` 802.1X/RADIUS SSID, `Guest` open/splash-page SSID). |

@@ -36,6 +36,7 @@ nac validate
 ```
 
 Both syntax and semantic validation should pass.
+Before you plan and apply, notice that Meraki Dashboard does not currently have Wireless on the side menu.  It will appear after deployment.
 
 ## Plan and Apply
 
@@ -53,8 +54,8 @@ and the two SSIDs.
     - **Wireless > Monitor > Access Points**: the access point with your
       `branch_cw_serial`.
     - **Wireless > Configure > SSIDs**: `Data` (802.1X, VLAN 10) and
-      `Guest` (open, VLAN 50), next to the default SSID Meraki creates for
-      every network.
+      `Guest` (open, VLAN 50).  Note there is a default SSID Meraki creates for
+      every network (branch_name - Wireless WiFi).
     - **Wireless > Configure > Access Control**: pick an SSID at the top to
       see its authentication and VLAN settings.
     - **Wireless > Configure > Splash Page**: the click-through splash page
@@ -72,7 +73,7 @@ So far every change started in the YAML. In real life, someone eventually
 Dashboard no longer matches the YAML. That's **configuration drift**. See
 how Network as Code handles it:
 
-1. In the Dashboard, go to **Wireless > Configure > Access Control**, pick
+1. In the Dashboard, go to **Wireless > Configure > Access Control**, click the drop-down menu and select
    the `Guest` SSID at the top, set **SSID status** to **Disabled**, and
    click **Save Changes**.
 2. Back in the terminal, run:

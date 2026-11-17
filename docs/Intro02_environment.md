@@ -12,8 +12,9 @@ either track:
 4. **IOS-XE Virtual Lab** - the four virtualized switches for Part 2,
    reached over SSH either via the jump machine or directly over VPN.
 
-See the [Cheat Sheet](CheatSheet.md) at any point for the exact URLs and
-credentials for each of these.
+Each section below gives the URLs and credentials you need. The
+[Cheat Sheet](CheatSheet.md) collects them all in one place for quick
+reference.
 
 ## 1. Windows Jump Machine
 
@@ -209,9 +210,9 @@ validation/testing tools directly.
 Once you get to that step, you'll reach the GitLab instance itself (to
 watch pipelines, open merge requests, etc.) either:
 
-- **From the jump machine** - open a browser and go to the GitLab URL in the
-  [Cheat Sheet](CheatSheet.md), and log in with the credentials listed
-  there.
+- **From the jump machine** - open a browser, go to
+  [gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop](https://gitlab.198.18.133.103.nip.io/dcloud/autocon-network-as-code-workshop), and log in with username `dcloud`
+  and password `C1sco12345`.
 - **Over VPN, from your own laptop** - reach the same GitLab URL directly,
   with the same credentials, and work with whatever local editor/terminal
   you set up in [part 1](#1-windows-jump-machine).
@@ -228,7 +229,7 @@ that WSL terminal, clone the public starter repo directly into the current
 (empty) folder:
 
 ```sh
-git clone <starter-repo-url> .
+git clone https://github.com/netascode/autocon-6-workshop .
 ```
 
 !!! warning "Don't miss the trailing `.`"
@@ -348,8 +349,9 @@ global settings](Meraki02_org_global.md#set-your-pods-values-in-env).
 
 !!! note "`.env` stays local - never committed"
     `.env` is gitignored - only the blank `.env.example` template is tracked
-    in Git. See the [Cheat Sheet](CheatSheet.md) for `source`-ing it before
-    you run Terraform. The pipeline reads separate GitLab CI/CD variables
+    in Git. You'll `source` it in
+    [step 2](Meraki02_org_global.md#source-env-and-initialize-terraform)
+    before running `nac`. The pipeline reads separate GitLab CI/CD variables
     instead, which you'll add in
     [step 7](Meraki07_cicd.md#add-your-cicd-variables).
 
@@ -396,14 +398,21 @@ here.
 Part 2 of the lab uses four virtualized IOS-XE switches (`Border`, `Core`,
 `Access1`, `Access2`), hosted in Cisco Modeling Labs (CML) inside the lab
 network - see [Topologies](Topologies.md) for the full diagram. All four
-devices share one set of SSH credentials; the IP addresses and credentials
-are listed in the [Cheat Sheet](CheatSheet.md).
+devices share one set of SSH credentials - username `nac_admin`, password
+`cisco`:
+
+| Device | IP Address |
+|---|---|
+| Border | 198.18.128.201 |
+| Core | 198.18.128.202 |
+| Access1 | 198.18.128.204 |
+| Access2 | 198.18.128.205 |
 
 - **From the jump machine** - use Solar-PuTTY, pre-installed with every
   device already configured. See [Part 2 - SSH to the lab
   devices](IOSXE01_ssh.md) for the full walkthrough.
 - **Over VPN, from your own laptop** - SSH to each device's IP address
-  directly, using the credentials in the Cheat Sheet.
+  directly, with the credentials above.
 
 ---
 

@@ -203,6 +203,8 @@ you put them in a `.rules/` directory in your own project (here
 rules. If you'd rather not write them yourselves, Cisco Services can
 develop custom semantic rules for your organization's specific policies.
 
+Note that before Plan and Apply the "Datacenter" network is the only network available in Meraki Dashboard. 
+
 ## Plan and Apply
 
 With the file validated, deploy it for real - both commands run from
@@ -218,28 +220,28 @@ As in the previous step, `nac apply` applies the `plan.tfplan` saved by
 plan output first.
 
 !!! tip "Verify in the Dashboard"
-    Your branch network now exists. In the left-hand menu, pick it from the
-    **Network** selector (it's named after your `branch_name`), then look
+    Your branch network now exists. In the left-hand menu, click **Network Datacenter** then select your network
+    from the **Network** selector (it's named after your `branch_name`), then look
     at:
 
-    - **The MX** - **Security & SD-WAN > Monitor > Appliance Status**: the
+    - **The MX**: **Security & SD-WAN > Monitor > Appliance Status**: the
       appliance with your `branch_mx_serial`, its address, and WAN 1/WAN 2
       uplinks.
-    - **VLANs and ports** - **Security & SD-WAN > Configure > Addressing &
+    - **VLANs and ports**: **Security & SD-WAN > Configure > Addressing &
       VLANs**: the six VLANs (Data, Voice, Iot, PCI, Guest, Infra) with
       their subnets, `Employees` as the group policy on VLAN 10, and under
       **Per-port VLAN Settings** ports 5-6 and 13-14 as trunks with ports
       7-12 disabled.
-    - **Site-to-site VPN** - **Security & SD-WAN > Configure > Site-to-site
+    - **Site-to-site VPN**: **Security & SD-WAN > Configure > Site-to-site
       VPN**: type **Spoke** with `Datacenter` as the hub, and under **Local
       networks** VPN mode enabled for every VLAN except Guest.
-    - **Traffic shaping** - **Security & SD-WAN > Configure > SD-WAN &
+    - **Traffic shaping**: **Security & SD-WAN > Configure > SD-WAN &
       Traffic Shaping**: the uplink bandwidth limits, the three
       uplink-selection policies under **SD-WAN policies**, and the
       traffic shaping rules.
-    - **Group policies** - **Network-wide > Configure > Group Policies**:
+    - **Group policies**: **Network-wide > Configure > Group Policies**:
       `Employees`, `Iot`, and `Voice`.
-    - **SNMP, syslog, NetFlow, local status page** - **Network-wide >
+    - **SNMP, syslog, NetFlow, local status page**: **Network-wide >
       Configure > General**: the local status page enabled under **Device
       configuration**, and under **Reporting** the syslog server
       `3.4.5.6`, SNMP access set to **V3**, and NetFlow sent to

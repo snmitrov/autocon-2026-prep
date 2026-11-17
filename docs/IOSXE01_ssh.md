@@ -42,8 +42,9 @@ and verify their configuration.
 ## This lab uses NETCONF
 
 Network as Code for IOS XE uses **NETCONF over SSH (TCP 830)** to push
-configuration to the devices. See the [Cheat Sheet](CheatSheet.md) for the
-shared device credentials used throughout this section.
+configuration to the devices. All four devices share one set of
+credentials, used throughout this section: username `nac_admin`, password
+`cisco`.
 
 !!! info "Why NETCONF?"
     With the candidate datastore enabled, Terraform never writes to the
@@ -99,8 +100,8 @@ Devices in this lab:
 
 !!! note "Lab reference"
     At any time during the lab, refer to [Topologies](Topologies.md) for the
-    full topology diagram, and to the [Cheat Sheet](CheatSheet.md) for the
-    device IP addresses and credentials.
+    full topology diagram. The [Cheat Sheet](CheatSheet.md) also lists the
+    device IP addresses and credentials for quick reference.
 
 To connect to a device:
 

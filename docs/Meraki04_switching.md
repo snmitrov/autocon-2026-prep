@@ -49,6 +49,8 @@ Both syntax and semantic validation should pass. This is what would catch
 an invalid port `type`, a VLAN ID out of range, or a malformed
 per-port-range override before `nac plan` ever runs.
 
+Before plan and apply, notice that in the Meraki Dashboard we do not have the Switching in the side menu.  It will appear after deployment.
+
 ## Plan and Apply
 
 ```sh
@@ -97,7 +99,7 @@ change, which deletes the resource and creates it again.
 
 ## Try it: change a setting
 
-`switch.mtu.default_mtu_size` is currently `9176` (jumbo frames). Change it
+in the same `data/4_switching.nac.yaml` file, go to line 85: `switch.mtu.default_mtu_size` is currently `9176` (jumbo frames). Change it
 to `1500` and walk it through the plan/apply loop - `nac plan` should show
 exactly one changed attribute:
 

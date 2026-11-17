@@ -129,4 +129,4 @@ the same three commands again.
 
 ---
 
-**← Previous:** [Networks and the MX appliance](Meraki03_networks.md) · **Next:** [Wireless](Meraki05_wireless.md)
+**← Previous:** [Networks and appliance settings](Meraki03_networks.md) · **Next:** [Wireless](Meraki05_wireless.md)

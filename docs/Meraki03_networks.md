@@ -373,4 +373,4 @@ what you intended. That's why you run `nac test` after every `nac apply`.
 
 ---
 
-**← Previous:** [Org and global settings](Meraki02_org_global.md) · **Next:** [Switching](Meraki04_switching.md)
+**← Previous:** [Organization global settings](Meraki02_org_global.md) · **Next:** [Switching](Meraki04_switching.md)

@@ -82,4 +82,4 @@ We will be authenticating to Meraki using a personal API key tied to your dashbo
 
 ---
 
-**← Previous:** [Environment Setup](Intro02_environment.md) · **Next:** [Org and global settings](Meraki02_org_global.md)
+**← Previous:** [Environment Setup](Intro02_environment.md) · **Next:** [Organization global settings](Meraki02_org_global.md)

@@ -376,4 +376,4 @@ Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 
 ---
 
-**← Previous:** [Access your Meraki organization](Meraki01_login.md) · **Next:** [Networks and the MX appliance](Meraki03_networks.md)
+**← Previous:** [Access your Meraki organization](Meraki01_login.md) · **Next:** [Networks and appliance settings](Meraki03_networks.md)

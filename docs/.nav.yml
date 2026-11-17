@@ -15,8 +15,9 @@ nav:
       - "[2] Configure Devices and Global Settings": IOSXE02_devices_global.md
       - "[3] Configure Device Groups": IOSXE03_device_groups.md
       - "[4] Configure Templates": IOSXE04_templates.md
-  - Topologies: Topologies.md
-  - Glossary: Glossary.md
-  - Cheat Sheet: CheatSheet.md
-  - References: References.md
+  - Reference:
+      - Cheat Sheet: CheatSheet.md
+      - Topologies: Topologies.md
+      - Glossary: Glossary.md
+      - References: References.md
 

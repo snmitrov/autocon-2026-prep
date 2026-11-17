@@ -1,7 +1,5 @@
 # Topologies
 
-TODO. Add the Info about IP/HOSTNAMES/env variables used etc..
-
 Visual reference for both halves of the lab - how the Meraki branch networks
 are organized, and how the IOS-XE devices are wired.
 

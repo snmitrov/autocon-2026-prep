@@ -4,37 +4,37 @@
 {% block tabs %}
 {{ super() }}
 <style>
-    .md-container {
-        height: 100%;
-    }
-
+    /* The home page has no Markdown content: hide the empty main area so the
+       hero below is the only thing on the page. */
     .md-main {
-        flex-grow: 0;
-        height: 0px;
+        display: none;
     }
 
-    .md-main__inner {
-        display: flex;
-        align-items: flex-start;
-        height: 100%;
-    }
-
+    /* The theme lays the page out as a full-height column; let the hero take
+       the remaining height and centre its content vertically, so no empty
+       band shows underneath. */
     .tx-container {
-        padding-top: .0rem;
-        padding-bottom: 2rem;
-        background: var(--md-primary-fg-color)
+        flex: 1 0 auto;
+        display: flex;
+        align-items: center;
+        padding: 2.5rem 0 3rem;
+        background: var(--md-primary-fg-color);
     }
 
     [data-md-color-scheme="default"] .tx-container {
         background: var(--md-default-bg-color);
     }
 
+    .tx-container > .md-grid {
+        width: 100%;
+    }
+
+    /* One column, centred on the page, text left-aligned. */
     .tx-hero {
-        margin: 32px 2.8rem;
-        margin-top: 10rem;
-        margin-right: 5rem;
+        max-width: 26rem;
+        margin: 0 auto;
+        padding: 0 1.2rem;
         color: var(--md-primary-bg-color);
-        justify-content: center;
     }
 
     [data-md-color-scheme="default"] .tx-hero {
@@ -42,11 +42,12 @@
     }
 
     .tx-hero h1 {
-        margin-bottom: 1rem;
+        margin: 0 0 1.2rem;
         color: currentColor;
         font-weight: 700;
         line-height: 1.15;
     }
+
     .tx-hero h1 .lab-subtitle {
         display: block;
         margin-top: .6rem;
@@ -56,37 +57,12 @@
         line-height: 1.35;
     }
 
-    :root {
-        .tx-hero__content {
-            margin: 0;
-        }
-    }
-
-    .tx-hero__content {
-        padding-bottom: 1rem;
-        margin: 0 auto;
-    }
-
-    .tx-hero__logo {
-        scale: 1;
-        width: 100%;
-        padding-bottom: 50px;
-    }
-
-    .tx-hero__image {
-        width: 1000px;
-        padding-right: 2.5rem;
-    }
-
-    .tx-hero .md-button {
-        margin-top: .5rem;
-        margin-right: .5rem;
-    }
-
+    /* ---------- primary button ---------- */
     .tx-hero .md-button--primary {
         display: inline-block;
+        margin: 0;
         padding: 16px 36px;
-        background: linear-gradient(135deg, #02C8FF, #0A60FF);
+        background: linear-gradient(135deg, var(--lab-cyan), var(--lab-blue));
         color: #fff !important;
         text-decoration: none !important;
         border: 0;
@@ -94,201 +70,65 @@
         font-size: 16px;
         font-weight: 700;
         letter-spacing: .3px;
-        box-shadow: 0 6px 20px rgba(10,96,255,.45);
+        box-shadow: 0 6px 20px rgba(10, 96, 255, .45);
         transition: transform .15s ease, box-shadow .15s ease;
     }
 
     .tx-hero .md-button--primary:focus,
     .tx-hero .md-button--primary:hover {
-        background: linear-gradient(135deg, #02C8FF, #0A60FF);
+        background: linear-gradient(135deg, var(--lab-cyan), var(--lab-blue));
         color: #fff !important;
         border: 0;
         transform: translateY(-2px);
-        box-shadow: 0 8px 26px rgba(10,96,255,.55);
+        box-shadow: 0 8px 26px rgba(10, 96, 255, .55);
     }
 
-    .feature-item h2 svg {
-        height: 30px;
-        float: left;
-        margin-right: 10px;
-        transform: translateY(10%);
-    }
-
-    .top-hr {
-        margin-top: 42px;
-        background: var(--md-primary-fg-color)
-    }
-
-    .feature-item {
-        font-family: 'Lato', sans-serif;
-        font-weight: 300;
-        box-sizing: border-box;
-        padding: 0 15px;
-        word-break: break-word
-    }
-
-    .feature-item h2 {
-        color: var(--md-default-fg-color);
-        font-weight: 300;
-        font-size: 25px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-height: normal;
-        margin-top: 20px;
-        margin-bottom: 10px;
-        font-family: inherit;
-    }
-
-    .feature-item p {
-        font-size: 16px;
-        line-height: 1.8em;
-        text-rendering: optimizeLegibility;
-        -webkit-font-smoothing: antialiased;
-        color: var(--md-default-fg-color);
-        margin: 0 0 10px;
-        display: block;
-    }
-
-    .feature-item path {
-        fill: var(--md-default-fg-color);
-    }
-
-    @media screen and (max-width:30em) {
-        .tx-hero h1 {
-            font-size: 1.4rem
-        }
-    }
-
-    @media screen and (min-width:60em) {
-        .md-sidebar--secondary {
-            display: none
-        }
-
-        .tx-hero {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tx-hero__content {
-            max-width: 22rem;
-            margin-top: 3.5rem;
-            margin-bottom: 3.5rem;
-            margin-left: 1.0rem;
-            margin-right: 4.0rem;
-            align-items: center;
-        }
-    }
-
-    @media screen and (min-width:76.25em) {
-        .md-sidebar--primary {
-            display: none
-        }
-
-        .top-hr {
-            width: 100%;
-            display: flex;
-            max-width: 61rem;
-            margin-right: auto;
-            margin-left: auto;
-            padding: 0 .2rem;
-        }
-
-        .bottom-hr {
-            margin-top: 10px;
-            width: 100%;
-            display: flex;
-            max-width: 61rem;
-            margin-right: auto;
-            margin-left: auto;
-            padding: 0 .2rem;
-        }
-
-        .feature-item {
-            flex: 1;
-            min-width: 0;
-        }
-    }
-
-    .hr {
-        border-bottom: 1px solid #eee;
-        width: 100%;
-        margin: 20px 0;
-    }
-
-    .text-center {
-        text-align: center;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
-        margin-top: 15px;
-        font-family: 'Lato', sans-serif;
-        font-size: 23px;
-        font-weight: 300;
-        padding-bottom: 10px;
-    }
-
-    .logos {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-flow: row wrap;
-        margin: 0 auto;
-    }
-
-    .logos img {
-        flex: 1 1 auto;
-        padding: 25px;
-        max-height: 130px;
-        vertical-align: middle;
-    }
-
-    .hr-logos {
-        margin-top: 0;
-        margin-bottom: 30px;
-    }
-
-    .md-footer-meta__inner {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        margin-top: 1.0rem;
-    }
-
-    .md-footer-social {
-        padding-top: 20px;
-    }
-
+    /* ---------- proctors ---------- */
     .tx-hero__presenters {
-        margin-top: 1.2rem;
-        color: currentColor;
+        margin-top: 1.8rem;
     }
 
     .tx-hero__presenters-title {
-        font-size: .8rem;
+        margin: 0 0 .5rem;
+        font-size: .65rem;
         font-weight: 700;
+        letter-spacing: .06em;
         text-transform: uppercase;
-        letter-spacing: .05em;
-        opacity: .85;
-        margin-bottom: .4rem;
+        opacity: .7;
     }
 
-    .tx-hero__presenters-list {
-        list-style: none;
+    .md-typeset ul.tx-hero__presenters-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .4rem;
         margin: 0;
         padding: 0;
-        font-size: .8rem;
-        opacity: .75;
+        list-style: none;
     }
 
-    .tx-hero__presenters-list li {
-        line-height: 1.6;
+    .md-typeset ul.tx-hero__presenters-list li {
+        margin: 0;
+        list-style: none;
+        padding: .25rem .75rem;
+        border: 1px solid rgba(2, 200, 255, .35);
+        border-radius: 999px;
+        font-size: .7rem;
+        line-height: 1.4;
+    }
+
+    @media screen and (min-width: 76.25em) {
+        .md-sidebar--primary {
+            display: none;
+        }
+    }
+
+    @media screen and (max-width: 30em) {
+        .tx-hero h1 {
+            font-size: 1.4rem;
+        }
     }
 </style>
 
-<!-- Main site Entry button descriptions -->
 <section class="tx-container">
     <div class="md-grid md-typeset">
         <div class="tx-hero">
@@ -297,9 +137,10 @@
                     From Network Change to Code
                     <span class="lab-subtitle">A Hands-on Network as Code Workshop - Meraki &amp; IOS-XE</span>
                 </h1>
-                <a href="Intro01_overview/" title="{{ page.next_page.title | striptags }}" class="md-button md-button--primary">
+                <a href="{{ 'Intro01_overview/' | url }}" class="md-button md-button--primary">
                     Get started →
                 </a>
+
                 <div class="tx-hero__presenters">
                     <p class="tx-hero__presenters-title">Meet your proctors</p>
                     <ul class="tx-hero__presenters-list">

@@ -48,4 +48,4 @@ Setup](Intro02_environment.md) for how each is used in this lab.
 
 ---
 
-**← Back to:** [Overview](Intro01_overview.md)
+**← Previous:** [Glossary](Glossary.md)

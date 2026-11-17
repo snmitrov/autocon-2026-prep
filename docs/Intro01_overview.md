@@ -8,8 +8,8 @@ deploy and manage Meraki and IOS-XE infrastructure with declarative
 Network as Code YAML and CI/CD pipelines.
 
 !!! tip "New to these acronyms?"
-    See the [Glossary](Glossary.md) in the top navigation. Keep it open in a
-    separate tab.
+    See the [Glossary](Glossary.md), under **Reference** in the top
+    navigation. Keep it open in a separate tab.
 
 The guide walks through both halves of the lab, in order:
 

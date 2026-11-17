@@ -25,6 +25,21 @@ and Solar-PuTTY already installed - connect to it through WebRDP.
     Instructions for connecting to your jump machine over WebRDP will be
     added here shortly.  You can pull up the lab guide in a web browser on the WebRDP session.  (Remember when using copy and paste from a Mac, use the **control** key)
 
+!!! tip "On the lab VPN? Use an RDP client instead"
+    If you're connected to the lab VPN, you can reach the jump machine with
+    a regular RDP client instead of WebRDP - for example the Windows App on
+    macOS or Remote Desktop Connection on Windows. Add a new PC with these
+    details:
+
+    - PC name / address: `198.18.133.36`
+    - Username: `corp\demouser`
+    - Password: `C1sco12345`
+
+    <figure markdown="span">
+      ![Windows App on macOS: Add PC dialog with the jump machine address and credentials](assets/rdp-add-pc.png){ width="40%" }<figcaption>Adding
+      the jump machine in the Windows App on macOS.</figcaption>
+    </figure>
+
 !!! tip "Working from your own computer instead"
     If you'd rather use your own laptop instead of RDP-ing into the jump
     machine, that's fine - use whatever editor and terminal you're
